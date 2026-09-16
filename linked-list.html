@@ -1,15 +1,23 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="ko" data-theme="dark" data-lang="ko">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Linked List (연결 리스트) — DSA Practice Hub</title>
-<meta name="description" content="Nodes and links, the array trade-off, stacks and circular queues built on a linked list, and middle insert/delete.">
+<title>연결 리스트 (Linked List) — DSA 연습 허브</title>
+<meta name="description" content="노드와 링크, 배열과의 비교, 연결 리스트로 만든 스택과 원형 큐, 그리고 중간 삽입·삭제.">
 <meta name="color-scheme" content="dark light">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%238b5cf6'/%3E%3Ctext x='50' y='70' font-size='56' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='bold'%3EDS%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link rel="stylesheet" href="assets/styles.css">
-<script>try{document.documentElement.setAttribute('data-theme',localStorage.getItem('dsa-hub:theme')||'dark');}catch(e){}</script>
+<script>
+try {
+  var d = document.documentElement;
+  d.setAttribute('data-theme', localStorage.getItem('dsa-hub:theme') || 'dark');
+  var l = localStorage.getItem('dsa-hub:lang') || 'ko';
+  d.setAttribute('data-lang', l);
+  d.setAttribute('lang', l);
+} catch (e) {}
+</script>
 </head>
 <body data-topic="linked-list">
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -20,101 +28,89 @@
 <header class="nav">
   <div class="nav-inner">
     <a class="brand" href="index.html">
-      <span class="brand-mark">DS</span><span class="brand-text">DSA Practice Hub</span>
+      <span class="brand-mark">DS</span><span class="brand-text"><span data-lang="ko">DSA 연습 허브</span><span data-lang="en">DSA Practice Hub</span></span>
     </a>
-    <nav class="nav-links" aria-label="Topics">
-        <a href="sorting.html">Sorting <span style="opacity:.55">정렬</span></a>
-        <a href="queue.html">Queue <span style="opacity:.55">큐</span></a>
-        <a href="linked-list.html" aria-current="page">Linked List <span style="opacity:.55">연결 리스트</span></a>
-        <a href="graph.html">Graph <span style="opacity:.55">그래프</span></a>
-        <a href="tree.html">Tree <span style="opacity:.55">트리</span></a>
+    <nav class="nav-links" aria-label="단원 / Topics">
+        <a href="queue.html"><span data-lang="ko">큐</span><span data-lang="en">Queue</span></a>
+        <a href="linked-list.html" aria-current="page"><span data-lang="ko">연결 리스트</span><span data-lang="en">Linked List</span></a>
+        <a href="graph.html"><span data-lang="ko">그래프</span><span data-lang="en">Graph</span></a>
+        <a href="tree.html"><span data-lang="ko">트리</span><span data-lang="en">Tree</span></a>
     </nav>
-    <button class="theme-toggle" data-theme-toggle type="button" aria-label="Toggle colour theme">☀</button>
+    <button class="lang-toggle" data-lang-toggle type="button" aria-label="언어 전환 / Switch language">EN</button>
+    <button class="theme-toggle" data-theme-toggle type="button" aria-label="테마 전환 / Toggle theme">☀</button>
   </div>
 </header>
 <main class="wrap">
 <div class="page-head" style="--grad: var(--grad-linked-list); --c-accent: var(--c-linked-list)">
   <div class="topic-icon">⛓</div>
-  <div class="topic-step" style="margin-top:.9rem">Unit 03</div>
-  <h1>Linked List <span class="ko">연결 리스트</span></h1>
-  <p class="lead" style="max-width:62ch">An array keeps its items in one contiguous block. A linked list gives up that block: each item is its own object, and every item stores the address of the next one. Everything else follows from that.</p>
+  <div class="topic-step" style="margin-top:.9rem"><span data-lang="ko">3단원</span><span data-lang="en">Unit 03</span></div>
+  <h1><span data-lang="ko">연결 리스트 <span class="ko">Linked List</span></span><span data-lang="en">Linked List <span class="ko">연결 리스트</span></span></h1>
+  <p class="lead" style="max-width:62ch"><span data-lang="ko">배열은 원소들을 하나의 연속된 덩어리에 담아 둡니다. 연결 리스트는 그 덩어리를 포기합니다. 각 원소가 따로 떨어진 객체가 되고, 대신 모든 원소가 다음 원소의 주소를 들고 있습니다. 나머지는 전부 여기서 따라 나옵니다.</span><span data-lang="en">An array keeps its items in one contiguous block. A linked list gives up that block: each item is its own object, and every item stores the address of the next one. Everything else follows from that.</span></p>
+  
 </div>
 <div class="layout">
 <aside class="card toc" style="--c-accent: var(--c-linked-list)">
-    <b>On this page</b>
-    <a href="#nodes">Nodes and links</a>
-    <a href="#vs-array">Versus arrays</a>
-    <a href="#flavors">Three flavours</a>
-    <a href="#code">Reference implementation</a>
-    <a href="#middle">Insert and delete</a>
-    <a href="#stack">Stack on a list</a>
-    <a href="#cqueue">Circular queue on a list</a>
-    <a href="#practice">Practice problems</a>
+    <b>목차</b>
+    <a href="#nodes"><span data-lang="ko">노드와 링크</span><span data-lang="en">Nodes and links</span></a>
+    <a href="#vs-array"><span data-lang="ko">배열과 비교하면</span><span data-lang="en">Versus arrays</span></a>
+    <a href="#flavors"><span data-lang="ko">세 가지 형태</span><span data-lang="en">Three flavours</span></a>
+    <a href="#code"><span data-lang="ko">참고 구현</span><span data-lang="en">Reference implementation</span></a>
+    <a href="#middle"><span data-lang="ko">중간 삽입과 삭제</span><span data-lang="en">Insert and delete</span></a>
+    <a href="#stack"><span data-lang="ko">리스트로 만든 스택</span><span data-lang="en">Stack on a list</span></a>
+    <a href="#cqueue"><span data-lang="ko">리스트로 만든 원형 큐</span><span data-lang="en">Circular queue on a list</span></a>
+    <a href="#practice"><span data-lang="ko">연습 문제</span><span data-lang="en">Practice problems</span></a>
 </aside>
 <div>
 
 
 <section id="nodes" style="--grad: var(--grad-linked-list)">
-  <h2 class="section-title">Nodes and links</h2>
-  <p>
-    A linked list is made of <strong>nodes</strong>. Each node holds two things: the value you care about
-    (<code>data</code>) and a reference to the next node (<code>link</code>, often called <code>next</code>).
-    A single variable, <code>head</code>, points at the first node. The final node's link is
-    <code>None</code>, which is how you know you have reached the end.
-  </p>
-  <p>Traversal is the same three lines every single time:</p>
+  <h2 class="section-title"><span data-lang="ko">노드와 링크</span><span data-lang="en">Nodes and links</span></h2>
+  <p><span data-lang="ko">연결 리스트는 <strong>노드</strong>로 이루어집니다. 각 노드는 두 가지를 담습니다. 실제로 쓰려는 값(<code>data</code>)과 다음 노드를 가리키는 참조(<code>link</code>, 흔히 <code>next</code>라고도 합니다)입니다. <code>head</code>라는 변수 하나가 첫 노드를 가리킵니다. 마지막 노드의 링크는 <code>None</code>이고, 그것으로 끝에 도달했음을 압니다.</span><span data-lang="en">A linked list is made of <strong>nodes</strong>. Each node holds two things: the value you care about (<code>data</code>) and a reference to the next node (<code>link</code>, often called <code>next</code>). A single variable, <code>head</code>, points at the first node. The final node's link is <code>None</code>, which is how you know you have reached the end.</span></p>
+  <p><span data-lang="ko">순회는 언제나 똑같은 세 줄입니다.</span><span data-lang="en">Traversal is the same three lines every single time:</span></p>
 <div class="code-card">
-  <div class="code-head"><span>traverse.py</span><button class="copy-btn" type="button">copy</button></div>
+  <div class="code-head"><span>traverse.py</span><button class="copy-btn" type="button">복사</button></div>
   <pre class="language-python"><code class="language-python">cur = head
 while cur is not None:
     print(cur.data)
     cur = cur.link      # &quot;follow the link&quot; - the whole idea in one statement</code></pre>
 </div>
-  <p>
-    The nodes can sit anywhere in memory, in any order. The chain exists only because each node knows the
-    address of the next. Lose <code>head</code> and the whole list becomes unreachable, even though every
-    node is still there.
-  </p>
+  <p><span data-lang="ko">노드들은 메모리 어디에, 어떤 순서로 놓여 있어도 상관없습니다. 각 노드가 다음 노드의 주소를 알고 있다는 사실만으로 사슬이 존재합니다. <code>head</code>를 잃어버리면 노드들이 전부 그대로 남아 있어도 리스트 전체에 닿을 수 없게 됩니다.</span><span data-lang="en">The nodes can sit anywhere in memory, in any order. The chain exists only because each node knows the address of the next. Lose <code>head</code> and the whole list becomes unreachable, even though every node is still there.</span></p>
 </section>
 
 <section id="vs-array" style="--grad: var(--grad-linked-list)">
-  <h2 class="section-title">Versus arrays</h2>
+  <h2 class="section-title"><span data-lang="ko">배열과 비교하면</span><span data-lang="en">Versus arrays</span></h2>
   <div class="table-scroll">
   <table class="data">
-    <thead><tr><th>&nbsp;</th><th>Array / Python list</th><th>Linked list</th></tr></thead>
+    <thead><tr><th>&nbsp;</th><th><span data-lang="ko">배열 / 파이썬 리스트</span><span data-lang="en">Array / Python list</span></th><th><span data-lang="ko">연결 리스트</span><span data-lang="en">Linked list</span></th></tr></thead>
     <tbody>
-      <tr><td><strong>Access item <em>i</em></strong></td><td>O(1) — compute the address</td><td>O(n) — walk from the head</td></tr>
-      <tr><td><strong>Insert at the front</strong></td><td>O(n) — shift everything right</td><td>O(1) — one new node, one reassignment</td></tr>
-      <tr><td><strong>Delete a known node</strong></td><td>O(n) — shift everything left</td><td>O(1) — reroute one link</td></tr>
-      <tr><td><strong>Size decided</strong></td><td>Up front (in a fixed array)</td><td>Never — grows node by node</td></tr>
-      <tr><td><strong>Memory per item</strong></td><td>Just the value</td><td>Value + one reference per node</td></tr>
-      <tr><td><strong>Cache behaviour</strong></td><td>Great — contiguous</td><td>Poor — nodes scattered</td></tr>
+      <tr><td><strong><span data-lang="ko"><em>i</em>번째 원소 접근</span><span data-lang="en">Access item <em>i</em></span></strong></td><td><span data-lang="ko">O(1) — 주소를 계산하면 됩니다</span><span data-lang="en">O(1) — compute the address</span></td><td><span data-lang="ko">O(n) — head부터 걸어가야 합니다</span><span data-lang="en">O(n) — walk from the head</span></td></tr>
+      <tr><td><strong><span data-lang="ko">맨 앞에 삽입</span><span data-lang="en">Insert at the front</span></strong></td><td><span data-lang="ko">O(n) — 뒤를 전부 오른쪽으로 밉니다</span><span data-lang="en">O(n) — shift everything right</span></td><td><span data-lang="ko">O(1) — 노드 하나 만들고 대입 한 번</span><span data-lang="en">O(1) — one new node, one reassignment</span></td></tr>
+      <tr><td><strong><span data-lang="ko">알고 있는 노드 삭제</span><span data-lang="en">Delete a known node</span></strong></td><td><span data-lang="ko">O(n) — 뒤를 전부 왼쪽으로 당깁니다</span><span data-lang="en">O(n) — shift everything left</span></td><td><span data-lang="ko">O(1) — 링크 하나만 돌리면 됩니다</span><span data-lang="en">O(1) — reroute one link</span></td></tr>
+      <tr><td><strong><span data-lang="ko">크기 결정 시점</span><span data-lang="en">Size decided</span></strong></td><td><span data-lang="ko">미리 (고정 배열의 경우)</span><span data-lang="en">Up front (in a fixed array)</span></td><td><span data-lang="ko">정하지 않음 — 노드 단위로 자랍니다</span><span data-lang="en">Never — grows node by node</span></td></tr>
+      <tr><td><strong><span data-lang="ko">원소당 메모리</span><span data-lang="en">Memory per item</span></strong></td><td><span data-lang="ko">값만</span><span data-lang="en">Just the value</span></td><td><span data-lang="ko">값 + 노드마다 참조 하나</span><span data-lang="en">Value + one reference per node</span></td></tr>
+      <tr><td><strong><span data-lang="ko">캐시 효율</span><span data-lang="en">Cache behaviour</span></strong></td><td><span data-lang="ko">좋음 — 연속되어 있습니다</span><span data-lang="en">Great — contiguous</span></td><td><span data-lang="ko">나쁨 — 노드가 흩어져 있습니다</span><span data-lang="en">Poor — nodes scattered</span></td></tr>
     </tbody>
   </table>
   </div>
   <div class="note">
-    <b>Read the insert/delete row carefully.</b>
-    <p>
-      "O(1) to delete" assumes you are <em>already holding</em> the node before the one you want to remove.
-      If you only know the value, you first have to find it, and finding is O(n). Linked lists make the
-      editing cheap, not the searching.
-    </p>
+    <b><span data-lang="ko">삽입·삭제 줄을 꼼꼼히 읽으세요.</span><span data-lang="en">Read the insert/delete row carefully.</span></b>
+    <p><span data-lang="ko">"삭제가 O(1)"이라는 말은 지우려는 노드의 <em>바로 앞 노드를 이미 손에 쥐고 있다</em>는 전제 위에 있습니다. 값만 알고 있다면 먼저 찾아야 하고, 찾는 일은 O(n)입니다. 연결 리스트가 싸게 만들어 주는 것은 편집이지 탐색이 아닙니다.</span><span data-lang="en">"O(1) to delete" assumes you are <em>already holding</em> the node before the one you want to remove. If you only know the value, you first have to find it, and finding is O(n). Linked lists make the editing cheap, not the searching.</span></p>
   </div>
 </section>
 
 <section id="flavors" style="--grad: var(--grad-linked-list)">
-  <h2 class="section-title">Three flavours</h2>
+  <h2 class="section-title"><span data-lang="ko">세 가지 형태</span><span data-lang="en">Three flavours</span></h2>
   <div class="kv">
-    <div><b>Singly linked · 단순 연결 리스트</b><span>One link per node, pointing forward. The last node links to <code>None</code>. Cheapest, and the one implemented in depth here.</span></div>
-    <div><b>Circularly linked · 원형 연결 리스트</b><span>The last node links back to the first instead of to <code>None</code>. There is no end — you stop when you arrive back where you started. Perfect for round-robin turn taking.</span></div>
-    <div><b>Doubly linked · 이중 연결 리스트</b><span>Each node stores <code>prev</code> as well as <code>next</code>, so you can walk backwards and delete a node you are standing on without knowing its predecessor. Costs one more reference per node.</span></div>
+    <div><b>단순 연결 리스트 · Singly linked</b><span><span data-lang="ko">노드마다 앞으로 향하는 링크 하나. 마지막 노드는 <code>None</code>을 가리킵니다. 가장 저렴하고, 이 페이지에서 자세히 구현하는 형태입니다.</span><span data-lang="en">One link per node, pointing forward. The last node links to <code>None</code>. Cheapest, and the one implemented in depth here.</span></span></div>
+    <div><b>원형 연결 리스트 · Circularly linked</b><span><span data-lang="ko">마지막 노드가 <code>None</code> 대신 첫 노드를 가리킵니다. 끝이 없으므로 출발한 자리로 돌아오면 멈춥니다. 돌아가며 차례를 주는 구조에 잘 맞습니다.</span><span data-lang="en">The last node links back to the first instead of to <code>None</code>. There is no end — you stop when you arrive back where you started. Perfect for round-robin turn taking.</span></span></div>
+    <div><b>이중 연결 리스트 · Doubly linked</b><span><span data-lang="ko">노드가 <code>next</code>뿐 아니라 <code>prev</code>도 들고 있어서 뒤로도 걸어갈 수 있고, 지금 서 있는 노드를 앞 노드를 몰라도 지울 수 있습니다. 대신 노드마다 참조를 하나 더 씁니다.</span><span data-lang="en">Each node stores <code>prev</code> as well as <code>next</code>, so you can walk backwards and delete a node you are standing on without knowing its predecessor. Costs one more reference per node.</span></span></div>
   </div>
 </section>
 
 <section id="code" style="--grad: var(--grad-linked-list)">
-  <h2 class="section-title">Reference implementation</h2>
+  <h2 class="section-title"><span data-lang="ko">참고 구현</span><span data-lang="en">Reference implementation</span></h2>
 <div class="code-card">
-  <div class="code-head"><span>linked_list.py</span><button class="copy-btn" type="button">copy</button></div>
+  <div class="code-head"><span>linked_list.py</span><button class="copy-btn" type="button">복사</button></div>
   <pre class="language-python"><code class="language-python">class Node:
     &quot;&quot;&quot;One link in the chain: a payload plus a reference to whatever comes next.&quot;&quot;&quot;
 
@@ -154,34 +150,22 @@ class LinkedList:
             cur = cur.link
         return n                  # O(n): there is no stored length to read</code></pre>
 </div>
-  <p>
-    Note <code>__len__</code>: the length is not stored anywhere, so counting means walking. If you need
-    <code>len()</code> often, keep a counter field and update it in every insert and delete.
-  </p>
+  <p><span data-lang="ko"><code>__len__</code>을 보세요. 길이를 따로 저장해 두지 않았으므로 세려면 걸어가야 합니다. <code>len()</code>을 자주 쓸 거라면 카운터 필드를 두고 삽입·삭제마다 갱신하세요.</span><span data-lang="en">Note <code>__len__</code>: the length is not stored anywhere, so counting means walking. If you need <code>len()</code> often, keep a counter field and update it in every insert and delete.</span></p>
 </section>
 
 <section id="middle" style="--grad: var(--grad-linked-list)">
-  <h2 class="section-title">Insert and delete in the middle</h2>
-  <p>
-    Both operations are expressed relative to the node <em>before</em> the position you care about — the
-    classic <code>insertNode(before, data)</code> / <code>deleteNode(before)</code> pair. A singly linked
-    node cannot see backwards, so the predecessor is the only handle you have.
-  </p>
-  <p><strong>Insert after <code>before</code>:</strong></p>
+  <h2 class="section-title"><span data-lang="ko">중간 삽입과 삭제</span><span data-lang="en">Insert and delete in the middle</span></h2>
+  <p><span data-lang="ko">두 연산 모두 목표 위치의 <em>바로 앞</em> 노드를 기준으로 표현합니다. 고전적인 <code>insertNode(before, data)</code> / <code>deleteNode(before)</code> 짝입니다. 단순 연결 리스트의 노드는 뒤를 볼 수 없으므로, 앞 노드가 우리가 가진 유일한 손잡이입니다.</span><span data-lang="en">Both operations are expressed relative to the node <em>before</em> the position you care about — the classic <code>insertNode(before, data)</code> / <code>deleteNode(before)</code> pair. A singly linked node cannot see backwards, so the predecessor is the only handle you have.</span></p>
+  <p><strong><span data-lang="ko"><code>before</code> 뒤에 삽입하기:</span><span data-lang="en">Insert after <code>before</code>:</span></strong></p>
   <ol>
-    <li>Make a new node.</li>
-    <li>Point the new node's link at <code>before.link</code> (the current rest of the list).</li>
-    <li>Point <code>before.link</code> at the new node.</li>
+    <li><span data-lang="ko">새 노드를 만듭니다.</span><span data-lang="en">Make a new node.</span></li>
+    <li><span data-lang="ko">새 노드의 링크를 <code>before.link</code>(지금의 나머지 리스트)로 향하게 합니다.</span><span data-lang="en">Point the new node's link at <code>before.link</code> (the current rest of the list).</span></li>
+    <li><span data-lang="ko"><code>before.link</code>가 새 노드를 가리키게 합니다.</span><span data-lang="en">Point <code>before.link</code> at the new node.</span></li>
   </ol>
-  <p>
-    Steps 2 and 3 cannot be swapped. Overwrite <code>before.link</code> first and you have thrown away the
-    only reference to the rest of the list. In Python, <code>Node(data, before.link)</code> does step 2
-    inside the constructor, which makes the correct order hard to get wrong.
-  </p>
-  <p><strong>Delete after <code>before</code>:</strong> point <code>before.link</code> past the victim, at
-  <code>victim.link</code>. The victim is now unreachable and Python reclaims it.</p>
+  <p><span data-lang="ko">2번과 3번의 순서를 바꾸면 안 됩니다. <code>before.link</code>를 먼저 덮어쓰면 나머지 리스트로 가는 유일한 참조를 버리게 됩니다. 파이썬에서는 <code>Node(data, before.link)</code>가 생성자 안에서 2번을 처리해 주므로 순서를 틀리기 어렵습니다.</span><span data-lang="en">Steps 2 and 3 cannot be swapped. Overwrite <code>before.link</code> first and you have thrown away the only reference to the rest of the list. In Python, <code>Node(data, before.link)</code> does step 2 inside the constructor, which makes the correct order hard to get wrong.</span></p>
+  <p><span data-lang="ko"><strong><code>before</code> 뒤를 삭제하기:</strong> <code>before.link</code>가 지울 노드를 건너뛰어 <code>victim.link</code>를 가리키게 합니다. 그러면 그 노드에는 닿을 수 없게 되고 파이썬이 알아서 회수합니다.</span><span data-lang="en"><strong>Delete after <code>before</code>:</strong> point <code>before.link</code> past the victim, at <code>victim.link</code>. The victim is now unreachable and Python reclaims it.</span></p>
 <div class="code-card">
-  <div class="code-head"><span>linked_list.py (continued)</span><button class="copy-btn" type="button">copy</button></div>
+  <div class="code-head"><span>linked_list.py (continued)</span><button class="copy-btn" type="button">복사</button></div>
   <pre class="language-python"><code class="language-python">    def insert_after(self, before, data):
         &quot;&quot;&quot;Insert `data` directly after the node `before`.
 
@@ -216,14 +200,10 @@ print(numbers.to_list())               # [10, 20, 25, 30]</code></pre>
 </section>
 
 <section id="stack" style="--grad: var(--grad-linked-list)">
-  <h2 class="section-title">A stack built on a linked list</h2>
-  <p>
-    A stack is last-in-first-out: push and pop both happen at one end. A linked list's head end is O(1) for
-    both, so a stack is almost free — rename <code>head</code> to <code>top</code> and you are done. No
-    capacity limit, no resizing, no wasted slots.
-  </p>
+  <h2 class="section-title"><span data-lang="ko">연결 리스트로 만든 스택</span><span data-lang="en">A stack built on a linked list</span></h2>
+  <p><span data-lang="ko">스택은 후입선출이라 push와 pop이 모두 한쪽 끝에서만 일어납니다. 연결 리스트의 head 쪽은 두 연산 모두 O(1)이므로 스택은 거의 공짜입니다. <code>head</code>를 <code>top</code>으로 이름만 바꾸면 끝입니다. 용량 제한도, 크기 재조정도, 버려지는 칸도 없습니다.</span><span data-lang="en">A stack is last-in-first-out: push and pop both happen at one end. A linked list's head end is O(1) for both, so a stack is almost free — rename <code>head</code> to <code>top</code> and you are done. No capacity limit, no resizing, no wasted slots.</span></p>
 <div class="code-card">
-  <div class="code-head"><span>linked_stack.py</span><button class="copy-btn" type="button">copy</button></div>
+  <div class="code-head"><span>linked_stack.py</span><button class="copy-btn" type="button">복사</button></div>
   <pre class="language-python"><code class="language-python">class LinkedStack:
     &quot;&quot;&quot;A stack where `top` is just the head of a linked list.&quot;&quot;&quot;
 
@@ -257,18 +237,11 @@ print(s.pop(), s.pop(), s.peek())    # C B A</code></pre>
 </section>
 
 <section id="cqueue" style="--grad: var(--grad-linked-list)">
-  <h2 class="section-title">A circular queue built on a linked list</h2>
-  <p>
-    A queue needs both ends: remove from the front, add at the rear. Walking to the rear each time would be
-    O(n), so a plain list would need two pointers.
-  </p>
-  <p>
-    Make the list <strong>circular</strong> — the last node links back to the first — and one pointer does
-    the job. Keep only <code>tail</code>. Then <code>tail.link</code> is, by definition, the front node, so
-    both ends are one step away and both operations are O(1).
-  </p>
+  <h2 class="section-title"><span data-lang="ko">연결 리스트로 만든 원형 큐</span><span data-lang="en">A circular queue built on a linked list</span></h2>
+  <p><span data-lang="ko">큐는 양쪽 끝이 모두 필요합니다. 앞에서 빼고 뒤에서 넣습니다. 매번 뒤까지 걸어가면 O(n)이 되므로, 평범한 리스트라면 포인터를 두 개 둬야 합니다.</span><span data-lang="en">A queue needs both ends: remove from the front, add at the rear. Walking to the rear each time would be O(n), so a plain list would need two pointers.</span></p>
+  <p><span data-lang="ko">리스트를 <strong>원형</strong>으로 만들면 — 마지막 노드가 첫 노드를 가리키게 하면 — 포인터 하나로 충분합니다. <code>tail</code>만 들고 있으면 <code>tail.link</code>가 정의상 맨 앞 노드이므로, 양쪽 끝이 모두 한 걸음 거리에 있고 두 연산 다 O(1)입니다.</span><span data-lang="en">Make the list <strong>circular</strong> — the last node links back to the first — and one pointer does the job. Keep only <code>tail</code>. Then <code>tail.link</code> is, by definition, the front node, so both ends are one step away and both operations are O(1).</span></p>
 <div class="code-card">
-  <div class="code-head"><span>linked_circular_queue.py</span><button class="copy-btn" type="button">copy</button></div>
+  <div class="code-head"><span>linked_circular_queue.py</span><button class="copy-btn" type="button">복사</button></div>
   <pre class="language-python"><code class="language-python">class LinkedCircularQueue:
     &quot;&quot;&quot;Circular linked queue holding a *tail* pointer only.
 
@@ -319,43 +292,36 @@ for name in [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]:
 print(q.to_list(), q.dequeue(), q.to_list())   # [&#x27;a&#x27;, &#x27;b&#x27;, &#x27;c&#x27;] a [&#x27;b&#x27;, &#x27;c&#x27;]</code></pre>
 </div>
   <div class="note">
-    <b>Compare with Unit 02.</b>
-    <p>
-      The array version needed modulo arithmetic and a wasted slot because the storage was fixed. This
-      version needs neither — it allocates a node per item and links it into the ring. It pays instead with
-      one reference per node and worse cache behaviour. Same abstract queue, opposite trade-offs.
-    </p>
+    <b><span data-lang="ko">2단원과 비교해 보세요.</span><span data-lang="en">Compare with Unit 02.</span></b>
+    <p><span data-lang="ko">배열 버전은 저장 공간이 고정이라 모듈로 연산과 버리는 칸 하나가 필요했습니다. 이 버전은 둘 다 필요 없습니다. 원소마다 노드를 만들어 고리에 끼워 넣으면 됩니다. 대신 노드마다 참조 하나와 나쁜 캐시 효율을 대가로 치릅니다. 추상적으로는 같은 큐인데, 절충의 방향이 정반대입니다.</span><span data-lang="en">The array version needed modulo arithmetic and a wasted slot because the storage was fixed. This version needs neither — it allocates a node per item and links it into the ring. It pays instead with one reference per node and worse cache behaviour. Same abstract queue, opposite trade-offs.</span></p>
   </div>
 </section>
 
 <section id="practice" style="--grad: var(--grad-linked-list)">
-  <h2 class="section-title">Practice problems</h2>
-  <p>Nearly every one of these is really a pointer-rewiring exercise. Draw the before/after picture before you write code. Tick a box when you solve it — progress is saved in this browser only.</p>
+  <h2 class="section-title"><span data-lang="ko">연습 문제</span><span data-lang="en">Practice problems</span></h2>
+  <p><span data-lang="ko">여기 있는 문제는 거의 전부 포인터를 다시 잇는 연습입니다. 코드를 쓰기 전에 바뀌기 전과 후의 그림을 먼저 그려 보세요. 문제를 풀면 체크하세요. 진행 상황은 이 브라우저에만 저장됩니다.</span><span data-lang="en">Nearly every one of these is really a pointer-rewiring exercise. Draw the before/after picture before you write code. Tick a box when you solve it — progress is saved in this browser only.</span></p>
 
   <div class="card topic-progress" data-progress-topic="linked-list" style="--grad: var(--grad-linked-list)">
     <div class="pbar"><span></span></div>
-    <div class="pnum">0 / 0 solved</div>
+    <div class="pnum">0 / 0</div>
   </div>
 
   <div class="filters">
-    <input class="search" id="problem-search" type="search" placeholder="Filter by title, hint or judge…" aria-label="Filter problems">
-    <button class="chip" type="button" data-diff="all" aria-pressed="true">All</button>
-    <button class="chip" type="button" data-diff="easy" aria-pressed="false">Easy</button>
-    <button class="chip" type="button" data-diff="medium" aria-pressed="false">Medium</button>
-    <button class="chip" type="button" data-diff="hard" aria-pressed="false">Hard</button>
-    <button class="chip" type="button" id="random-problem" data-topic="linked-list">🎲 Random unsolved</button>
+    <input class="search" id="problem-search" type="search" placeholder="제목·힌트·저지로 검색…" aria-label="문제 검색">
+    <button class="chip" type="button" data-diff="all" aria-pressed="true">전체</button>
+    <button class="chip" type="button" data-diff="easy" aria-pressed="false">쉬움</button>
+    <button class="chip" type="button" data-diff="medium" aria-pressed="false">보통</button>
+    <button class="chip" type="button" data-diff="hard" aria-pressed="false">어려움</button>
+    <button class="chip" type="button" id="random-problem" data-topic="linked-list">🎲 안 푼 문제 랜덤</button>
   </div>
 
   <ul class="plist" id="problem-list"></ul>
-  <p class="empty" id="problem-empty" style="display:none">No problem matches that filter.</p>
-  <p style="font-size:.84rem;color:var(--text-faint);margin-top:1rem">
-    Problems marked <em>Premium</em> need a paid LeetCode account — everything else is free.
-    Links were checked against each judge's current problem slug; if one ever moves, search the title on the judge's site.
-  </p>
+  <p class="empty" id="problem-empty" style="display:none">조건에 맞는 문제가 없습니다.</p>
+  <p style="font-size:.84rem;color:var(--text-faint);margin-top:1rem"><span data-lang="ko"><em>Premium</em> 표시가 붙은 문제는 LeetCode 유료 계정이 필요합니다. 나머지는 모두 무료입니다. 링크는 각 저지의 현재 문제 주소를 기준으로 확인했습니다. 혹시 주소가 바뀌었다면 저지에서 제목으로 검색하세요.</span><span data-lang="en">Problems marked <em>Premium</em> need a paid LeetCode account — everything else is free. Links were checked against each judge's current problem slug; if one ever moves, search the title on the judge's site.</span></p>
 </section>
 <div class="pager">
-  <a class="card" href="queue.html"><span>← Previous</span><b>Queue · 큐</b></a>
-  <a class="card" href="graph.html" style="text-align:right"><span>Next topic →</span><b>Graph · 그래프</b></a>
+  <a class="card" href="queue.html"><span><span data-lang="ko">← 이전</span><span data-lang="en">← Previous</span></span><b><span data-lang="ko">큐</span><span data-lang="en">Queue</span></b></a>
+  <a class="card" href="graph.html" style="text-align:right"><span><span data-lang="ko">다음 단원 →</span><span data-lang="en">Next topic →</span></span><b><span data-lang="ko">그래프</span><span data-lang="en">Graph</span></b></a>
 </div>
 </div>
 </div>
@@ -363,15 +329,9 @@ print(q.to_list(), q.dequeue(), q.to_list())   # [&#x27;a&#x27;, &#x27;b&#x27;, 
 
 <footer>
   <div class="wrap">
-    <p style="margin:0 0 .4rem">
-      <strong>DSA Practice Hub</strong> — a personal study site for a year-long 정보/정보과학 course.
-      All explanations, diagrams and code here are written from scratch; no class material is reproduced.
+    <p style="margin:0 0 .4rem"><span data-lang="ko"><strong>DSA 연습 허브</strong> — 1년 과정 정보/정보과학 수업을 위한 개인 학습 사이트입니다. 여기 있는 설명·그림·코드는 모두 새로 작성한 것이며, 수업 자료를 그대로 옮긴 부분은 없습니다.</span><span data-lang="en"><strong>DSA Practice Hub</strong> — a personal study site for a year-long 정보/정보과학 course. All explanations, diagrams and code here are written from scratch; no class material is reproduced.</span>
     </p>
-    <p style="margin:0">
-      Problem links point to <a href="https://leetcode.com/" target="_blank" rel="noopener">LeetCode</a>,
-      <a href="https://www.acmicpc.net/" target="_blank" rel="noopener">Baekjoon</a> and
-      <a href="https://www.geeksforgeeks.org/" target="_blank" rel="noopener">GeeksforGeeks</a>;
-      those problems belong to their respective judges. Progress is stored only in this browser.
+    <p style="margin:0"><span data-lang="ko">문제 링크는 <a href="https://leetcode.com/" target="_blank" rel="noopener">LeetCode</a>, <a href="https://www.acmicpc.net/" target="_blank" rel="noopener">백준</a>, <a href="https://www.geeksforgeeks.org/" target="_blank" rel="noopener">GeeksforGeeks</a>로 연결됩니다. 각 문제의 저작권은 해당 저지에 있습니다. 진행 상황은 이 브라우저에만 저장됩니다.</span><span data-lang="en">Problem links point to <a href="https://leetcode.com/" target="_blank" rel="noopener">LeetCode</a>, <a href="https://www.acmicpc.net/" target="_blank" rel="noopener">Baekjoon</a> and <a href="https://www.geeksforgeeks.org/" target="_blank" rel="noopener">GeeksforGeeks</a>; those problems belong to their respective judges. Progress is stored only in this browser.</span>
     </p>
   </div>
 </footer>
