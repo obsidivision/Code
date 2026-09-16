@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tree (트리) — DSA Practice Hub</title>
+<meta name="description" content="Binary trees, array and linked representations, the three traversals, expression trees and binary search trees in Python.">
+<meta name="color-scheme" content="dark light">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%238b5cf6'/%3E%3Ctext x='50' y='70' font-size='56' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='bold'%3EDS%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="stylesheet" href="assets/styles.css">
+<script>try{document.documentElement.setAttribute('data-theme',localStorage.getItem('dsa-hub:theme')||'dark');}catch(e){}</script>
+</head>
+<body data-topic="tree">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#ec4899"/></linearGradient>
+</defs></svg>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">DS</span><span class="brand-text">DSA Practice Hub</span>
+    </a>
+    <nav class="nav-links" aria-label="Topics">
+        <a href="sorting.html">Sorting <span style="opacity:.55">정렬</span></a>
+        <a href="queue.html">Queue <span style="opacity:.55">큐</span></a>
+        <a href="linked-list.html">Linked List <span style="opacity:.55">연결 리스트</span></a>
+        <a href="graph.html">Graph <span style="opacity:.55">그래프</span></a>
+        <a href="tree.html" aria-current="page">Tree <span style="opacity:.55">트리</span></a>
+    </nav>
+    <button class="theme-toggle" data-theme-toggle type="button" aria-label="Toggle colour theme">☀</button>
+  </div>
+</header>
+<main class="wrap">
+<div class="page-head" style="--grad: var(--grad-tree); --c-accent: var(--c-tree)">
+  <div class="topic-icon">🌲</div>
+  <div class="topic-step" style="margin-top:.9rem">Unit 05</div>
+  <h1>Tree <span class="ko">트리</span></h1>
+  <p class="lead" style="max-width:62ch">A tree is a graph with no cycles and a designated starting point. That single restriction buys you a hierarchy — and, once you add an ordering rule, searching in O(log n).</p>
+</div>
+<div class="layout">
+<aside class="card toc" style="--c-accent: var(--c-tree)">
+    <b>On this page</b>
+    <a href="#binary">Binary trees</a>
+    <a href="#shapes">Special shapes</a>
+    <a href="#repr">Two representations</a>
+    <a href="#traversal">The three traversals</a>
+    <a href="#expr">Expression trees</a>
+    <a href="#bst">Binary search trees</a>
+    <a href="#practice">Practice problems</a>
+</aside>
+<div>
+
+
+<section id="binary" style="--grad: var(--grad-tree)">
+  <h2 class="section-title">Binary trees</h2>
+  <p>
+    The definition is recursive, and it is worth reading twice because every algorithm on this page is just
+    the definition turned into code:
+  </p>
+  <div class="note">
+    <b>A binary tree is either empty, or it is a root node together with two binary trees — its left subtree and its right subtree.</b>
+    <p>
+      "Empty" is a real binary tree, not a special case to patch later. That is why every function below
+      starts with <code>if node is None</code>.
+    </p>
+  </div>
+  <p>Consequences of that definition:</p>
+  <ul>
+    <li>Every node has <strong>at most two</strong> children — degree ≤ 2.</li>
+    <li><strong>Left and right are distinguishable.</strong> A root with one left child is a different tree from a root with one right child, even though both have two nodes.</li>
+    <li>Every node except the root has exactly one parent, so an <strong>n-node tree has exactly n − 1 edges</strong> — one edge per node, minus the root which has none above it.</li>
+    <li>There are no cycles, so there is exactly one path from the root to any node.</li>
+  </ul>
+  <div class="card diagram" style="max-width:380px"><svg viewBox="0 0 330 200" role="img" aria-label="binary search tree" style="max-width:330px"><line class="dg-edge" x1="149.5" y1="44.7" x2="97.5" y2="87.3"/><line class="dg-edge" x1="180.5" y1="44.7" x2="232.5" y2="87.3"/><line class="dg-edge" x1="70.8" y1="116.6" x2="47.2" y2="151.4"/><line class="dg-edge" x1="93.2" y1="116.6" x2="116.8" y2="151.4"/><line class="dg-edge" x1="259.2" y1="116.6" x2="282.8" y2="151.4"/><circle class="dg-node" cx="165" cy="32" r="20"/><text class="dg-label" x="165" y="33">8</text><circle class="dg-node" cx="82" cy="100" r="20"/><text class="dg-label" x="82" y="101">3</text><circle class="dg-node" cx="248" cy="100" r="20"/><text class="dg-label" x="248" y="101">10</text><circle class="dg-node" cx="36" cy="168" r="20"/><text class="dg-label" x="36" y="169">1</text><circle class="dg-node" cx="128" cy="168" r="20"/><text class="dg-label" x="128" y="169">6</text><circle class="dg-node" cx="294" cy="168" r="20"/><text class="dg-label" x="294" y="169">14</text></svg>
+  <p style="margin-top:.5rem">6 nodes, 5 edges, height 3</p></div>
+</section>
+
+<section id="shapes" style="--grad: var(--grad-tree)">
+  <h2 class="section-title">Special shapes and height limits</h2>
+  <div class="kv">
+    <div><b>Full / perfect · 포화 이진 트리</b><span>Every level is completely filled. A perfect tree of height <em>h</em> holds exactly 2<sup>h</sup> − 1 nodes, and level <em>k</em> holds 2<sup>k−1</sup> of them.</span></div>
+    <div><b>Complete · 완전 이진 트리</b><span>Every level is filled except possibly the last, and the last fills strictly left to right with no gaps. This is the shape that stores perfectly in an array.</span></div>
+    <div><b>Skewed · 편향 이진 트리</b><span>Every node has only one child, so the tree degenerates into a linked list. This is the worst case that ruins a BST's performance.</span></div>
+  </div>
+  <p>
+    For <em>n</em> nodes, the <strong>minimum</strong> possible height is ⌈log₂(n + 1)⌉ — achieved when the
+    tree is as bushy as possible — and the <strong>maximum</strong> is <em>n</em>, when the tree is a single
+    skewed chain. The whole promise of tree-based searching rests on staying near the minimum.
+  </p>
+<div class="code-card">
+  <div class="code-head"><span>tree_node.py</span><button class="copy-btn" type="button">copy</button></div>
+  <pre class="language-python"><code class="language-python">class TreeNode:
+    def __init__(self, data, left=None, right=None):
+        self.data = data
+        self.left = left          # a TreeNode, or None
+        self.right = right        # a TreeNode, or None
+
+
+#        8
+#      /   \
+#     3     10
+#    / \      \
+#   1   6      14
+root = TreeNode(8,
+                TreeNode(3, TreeNode(1), TreeNode(6)),
+                TreeNode(10, None, TreeNode(14)))
+
+
+def height(node):
+    &quot;&quot;&quot;Number of levels. An empty tree has height 0 - straight from the definition.&quot;&quot;&quot;
+    if node is None:
+        return 0
+    return 1 + max(height(node.left), height(node.right))
+
+
+def count(node):
+    if node is None:
+        return 0
+    return 1 + count(node.left) + count(node.right)
+
+
+print(count(root), height(root))      # 6 3</code></pre>
+</div>
+</section>
+
+<section id="repr" style="--grad: var(--grad-tree)">
+  <h2 class="section-title">Two representations</h2>
+  <h3>Array-based</h3>
+  <p>
+    Number the nodes level by level, left to right, starting at 1, and store each node at that index. Then
+    the structure is pure arithmetic — no pointers at all:
+  </p>
+  <div class="kv">
+    <div><b>Parent of i</b><span><code>i // 2</code></span></div>
+    <div><b>Left child of i</b><span><code>2 * i</code></span></div>
+    <div><b>Right child of i</b><span><code>2 * i + 1</code></span></div>
+  </div>
+<div class="code-card">
+  <div class="code-head"><span>array_tree.py</span><button class="copy-btn" type="button">copy</button></div>
+  <pre class="language-python"><code class="language-python"># 1-indexed array representation; index 0 is left unused so the arithmetic stays clean.
+tree = [None, 8, 3, 10, 1, 6, None, 14]
+#              1  2   3  4  5     6   7
+
+def parent(i):      return i // 2
+def left_child(i):  return 2 * i
+def right_child(i): return 2 * i + 1
+
+print(tree[left_child(2)], tree[right_child(2)])   # 1 6   (children of the node holding 3)
+print(tree[parent(5)])                             # 3     (parent of the node holding 6)</code></pre>
+</div>
+  <p>
+    Compact and fast for a <em>complete</em> tree — this is exactly how heaps are stored. For a sparse or
+    skewed tree it is terrible: a skewed tree of 10 nodes needs an array of 2¹⁰ slots, nearly all empty.
+  </p>
+  <h3>Linked</h3>
+  <p>
+    Each node is an object holding <code>data</code>, <code>left</code> and <code>right</code> — the
+    <code>TreeNode</code> class above. Memory is proportional to the number of real nodes regardless of
+    shape, and inserting does not require resizing anything. This is what almost all real code uses, and
+    what every judge problem below hands you.
+  </p>
+</section>
+
+<section id="traversal" style="--grad: var(--grad-tree)">
+  <h2 class="section-title">The three traversals</h2>
+  <p>
+    A list has one obvious order. A tree does not, so you pick one. All three traversals visit the left
+    subtree before the right; they differ only in <em>when the node itself is visited</em>.
+  </p>
+  <div class="kv">
+    <div><b>Preorder · 전위 (VLR)</b><span>Node first, then left, then right. Use it to copy a tree or to print a structure top-down.</span></div>
+    <div><b>Inorder · 중위 (LVR)</b><span>Left, node, right. On a BST this emits the keys in sorted order.</span></div>
+    <div><b>Postorder · 후위 (LRV)</b><span>Both children first, node last. Use it whenever a node's result depends on its children — evaluating, or freeing memory.</span></div>
+  </div>
+<div class="code-card">
+  <div class="code-head"><span>traversals.py</span><button class="copy-btn" type="button">copy</button></div>
+  <pre class="language-python"><code class="language-python">def preorder(node, out=None):
+    &quot;&quot;&quot;VLR - visit the node, then the left subtree, then the right.&quot;&quot;&quot;
+    if out is None:
+        out = []
+    if node is not None:
+        out.append(node.data)          # V
+        preorder(node.left, out)       # L
+        preorder(node.right, out)      # R
+    return out
+
+
+def inorder(node, out=None):
+    &quot;&quot;&quot;LVR - on a binary search tree this comes out sorted.&quot;&quot;&quot;
+    if out is None:
+        out = []
+    if node is not None:
+        inorder(node.left, out)        # L
+        out.append(node.data)          # V
+        inorder(node.right, out)       # R
+    return out
+
+
+def postorder(node, out=None):
+    &quot;&quot;&quot;LRV - both children are finished before the node itself is visited.&quot;&quot;&quot;
+    if out is None:
+        out = []
+    if node is not None:
+        postorder(node.left, out)      # L
+        postorder(node.right, out)     # R
+        out.append(node.data)          # V
+    return out
+
+
+print(preorder(root))    # [8, 3, 1, 6, 10, 14]
+print(inorder(root))     # [1, 3, 6, 8, 10, 14]   &lt;- sorted, because this is a BST
+print(postorder(root))   # [1, 6, 3, 14, 10, 8]</code></pre>
+</div>
+  <p style="font-size:.9rem;color:var(--text-faint)">
+    Reading trick: the letter V tells you where the node goes. Pre = V first, In = V in the middle,
+    Post = V last. L always comes before R.
+  </p>
+</section>
+
+<section id="expr" style="--grad: var(--grad-tree)">
+  <h2 class="section-title">Expression trees</h2>
+  <p>
+    An expression tree stores an arithmetic expression as a tree: <strong>operators at the internal
+    nodes, operands at the leaves</strong>. The tree below is <code>4 * (5 - (7 + 2))</code>.
+  </p>
+  <div class="card diagram" style="max-width:460px"><svg viewBox="0 0 420 300" role="img" aria-label="expression tree" style="max-width:420px"><line class="dg-edge" x1="144.7" y1="46.9" x2="85.3" y2="97.1"/><line class="dg-edge" x1="175.3" y1="46.9" x2="234.7" y2="97.1"/><line class="dg-edge" x1="237.6" y1="125.7" x2="202.4" y2="170.3"/><line class="dg-edge" x1="264.5" y1="123.8" x2="315.5" y2="172.2"/><line class="dg-edge" x1="319.8" y1="203.2" x2="295.2" y2="244.8"/><line class="dg-edge" x1="341.0" y1="202.7" x2="369.0" y2="245.3"/><circle class="dg-node" cx="160" cy="34" r="20"/><text class="dg-label" x="160" y="35">*</text><circle class="dg-node" cx="70" cy="110" r="20"/><text class="dg-label" x="70" y="111">4</text><circle class="dg-node" cx="250" cy="110" r="20"/><text class="dg-label" x="250" y="111">-</text><circle class="dg-node" cx="190" cy="186" r="20"/><text class="dg-label" x="190" y="187">5</text><circle class="dg-node" cx="330" cy="186" r="20"/><text class="dg-label" x="330" y="187">+</text><circle class="dg-node" cx="285" cy="262" r="20"/><text class="dg-label" x="285" y="263">7</text><circle class="dg-node" cx="380" cy="262" r="20"/><text class="dg-label" x="380" y="263">2</text></svg>
+  <p style="margin-top:.5rem">Postfix: <code>4 5 7 2 + - *</code> &nbsp;·&nbsp; value: −16</p></div>
+  <p>
+    The structure encodes precedence and grouping, so no brackets are needed — the shape of the tree already
+    says that <code>7 + 2</code> happens before the subtraction. Run the three traversals over it and you get
+    the three classic notations: inorder gives infix, preorder gives prefix, postorder gives postfix.
+  </p>
+  <p>
+    <strong>Why evaluation is postorder:</strong> an operator cannot run until both of its operands have
+    values. Postorder finishes both subtrees before visiting the node, which is exactly that requirement. Try
+    to evaluate in preorder and you reach <code>*</code> while neither side is known yet.
+  </p>
+  <p>
+    Building the tree from postfix input uses a stack — the same structure from Unit 03. Read tokens left to
+    right: an operand becomes a leaf and is pushed; an operator pops the two most recent subtrees, becomes
+    their parent, and is pushed back. Pop the two in reverse order, or subtraction and division come out
+    backwards.
+  </p>
+<div class="code-card">
+  <div class="code-head"><span>expression_tree.py</span><button class="copy-btn" type="button">copy</button></div>
+  <pre class="language-python"><code class="language-python">import operator
+
+OPERATORS = {&quot;+&quot;: operator.add, &quot;-&quot;: operator.sub,
+             &quot;*&quot;: operator.mul, &quot;/&quot;: operator.truediv}
+
+
+def build_from_postfix(tokens):
+    &quot;&quot;&quot;Build an expression tree from postfix tokens, using a stack of subtrees.&quot;&quot;&quot;
+    stack = []
+    for token in tokens:
+        if token in OPERATORS:
+            right = stack.pop()            # popped in reverse: the second operand comes off first
+            left = stack.pop()
+            stack.append(TreeNode(token, left, right))
+        else:
+            stack.append(TreeNode(float(token)))
+    return stack.pop()                     # exactly one subtree is left: the root
+
+
+def evaluate(node):
+    &quot;&quot;&quot;Postorder evaluation: both operands must be known before the operator runs.&quot;&quot;&quot;
+    if node.left is None and node.right is None:
+        return node.data                   # a leaf is an operand
+    return OPERATORS[node.data](evaluate(node.left), evaluate(node.right))
+
+
+tree = build_from_postfix([&quot;4&quot;, &quot;5&quot;, &quot;7&quot;, &quot;2&quot;, &quot;+&quot;, &quot;-&quot;, &quot;*&quot;])
+print(inorder(tree))    # [4.0, &#x27;*&#x27;, 5.0, &#x27;-&#x27;, 7.0, &#x27;+&#x27;, 2.0]  - infix, minus the brackets
+print(evaluate(tree))   # -16.0    which is 4 * (5 - (7 + 2))</code></pre>
+</div>
+</section>
+
+<section id="bst" style="--grad: var(--grad-tree)">
+  <h2 class="section-title">Binary search trees</h2>
+  <p>
+    A BST adds one ordering rule to the binary tree, and the rule applies to <strong>whole subtrees</strong>,
+    not just to the immediate children:
+  </p>
+  <div class="note">
+    <b>For every node: every key in its left subtree is smaller, and every key in its right subtree is larger.</b>
+    <p>
+      That recursion is the part people get wrong. A node's right child being larger is not enough — a value
+      buried three levels down the right subtree must be larger than the node too.
+    </p>
+  </div>
+  <p>
+    The payoff: at every node one comparison eliminates an entire subtree. On a balanced tree that is
+    O(log n) for search, insert and delete. On a skewed tree it degrades to O(n) — the tree has become a
+    linked list. (Self-balancing variants such as AVL and red-black trees exist to prevent exactly that.)
+  </p>
+  <p>Also worth memorising: <strong>an inorder traversal of a BST prints the keys in sorted order.</strong></p>
+
+  <h3>Search</h3>
+  <p>Compare with the current node. Equal → found. Smaller → go left. Larger → go right. Hit <code>None</code> → the key is not in the tree.</p>
+
+  <h3>Insert</h3>
+  <p>
+    Search for the key. The search will fail, and the <code>None</code> it fails at is precisely the spot the
+    key belongs in — attach the new leaf there. Inserting never restructures an existing node.
+  </p>
+
+  <h3>Delete — three cases</h3>
+  <ol>
+    <li><strong>Leaf node.</strong> No children to rescue. Unlink it from its parent and you are done.</li>
+    <li><strong>One child.</strong> Splice that child up into the deleted node's place. The whole subtree keeps its ordering relative to everything above.</li>
+    <li><strong>Two children.</strong> You cannot simply remove it — two subtrees would be orphaned. Instead find the node's <em>in-order successor</em>: the smallest key in its right subtree (equivalently, use the largest key in the left subtree). Copy that value into the node, then delete the successor from the right subtree. The successor is the leftmost node of that subtree, so it has no left child — meaning that second deletion is guaranteed to be case 1 or case 2, and the recursion terminates.</li>
+  </ol>
+  <p>
+    Why the successor specifically? It is the next key in sorted order, so it is larger than everything in
+    the left subtree and smaller than everything else in the right subtree. It is the only value that can sit
+    in that position without breaking the BST rule.
+  </p>
+<div class="code-card">
+  <div class="code-head"><span>bst.py</span><button class="copy-btn" type="button">copy</button></div>
+  <pre class="language-python"><code class="language-python">def bst_search(node, key):
+    &quot;&quot;&quot;Iterative search - one comparison decides the whole direction.&quot;&quot;&quot;
+    while node is not None:
+        if key == node.data:
+            return node
+        node = node.left if key &lt; node.data else node.right
+    return None                            # fell off the tree: not present
+
+
+def bst_insert(node, key):
+    &quot;&quot;&quot;Insert exactly where a failed search would have stopped. Returns the subtree root.&quot;&quot;&quot;
+    if node is None:
+        return TreeNode(key)               # this is where the search ran out
+    if key &lt; node.data:
+        node.left = bst_insert(node.left, key)
+    elif key &gt; node.data:
+        node.right = bst_insert(node.right, key)
+    return node                            # key == node.data -&gt; duplicate, ignored
+
+
+def bst_min(node):
+    while node.left is not None:           # smallest key = leftmost node
+        node = node.left
+    return node
+
+
+def bst_delete(node, key):
+    &quot;&quot;&quot;Delete `key` and return the new subtree root.&quot;&quot;&quot;
+    if node is None:
+        return None
+    if key &lt; node.data:
+        node.left = bst_delete(node.left, key)
+    elif key &gt; node.data:
+        node.right = bst_delete(node.right, key)
+    else:
+        # case (a) leaf, and case (b) one child, collapse into these two lines:
+        if node.left is None:
+            return node.right              # None for a leaf, else splice the right child up
+        if node.right is None:
+            return node.left
+        # case (c) two children: copy the in-order successor&#x27;s value, then delete it below
+        successor = bst_min(node.right)
+        node.data = successor.data
+        node.right = bst_delete(node.right, successor.data)
+    return node
+
+
+tree = None
+for key in [8, 3, 10, 1, 6, 14, 4, 7]:
+    tree = bst_insert(tree, key)
+print(inorder(tree))                       # [1, 3, 4, 6, 7, 8, 10, 14]
+print(bst_search(tree, 6) is not None)     # True
+tree = bst_delete(tree, 3)                 # two children -&gt; replaced by successor 4
+print(inorder(tree))                       # [1, 4, 6, 7, 8, 10, 14]</code></pre>
+</div>
+</section>
+
+<section id="practice" style="--grad: var(--grad-tree)">
+  <h2 class="section-title">Practice problems</h2>
+  <p>The three traversal problems come first for a reason — get those automatic, and the BST problems become small variations on code you already have. Going further once these are done: <a href="https://leetcode.com/problems/validate-binary-search-tree/" target="_blank" rel="noopener">LC 98 Validate Binary Search Tree</a> (it catches you if you think the BST rule is only about direct children) and <a href="https://www.acmicpc.net/problem/1991" target="_blank" rel="noopener">BOJ 1991 트리 순회</a>, which asks for all three traversals of one tree in a single program. Tick a box when you solve it — progress is saved in this browser only.</p>
+
+  <div class="card topic-progress" data-progress-topic="tree" style="--grad: var(--grad-tree)">
+    <div class="pbar"><span></span></div>
+    <div class="pnum">0 / 0 solved</div>
+  </div>
+
+  <div class="filters">
+    <input class="search" id="problem-search" type="search" placeholder="Filter by title, hint or judge…" aria-label="Filter problems">
+    <button class="chip" type="button" data-diff="all" aria-pressed="true">All</button>
+    <button class="chip" type="button" data-diff="easy" aria-pressed="false">Easy</button>
+    <button class="chip" type="button" data-diff="medium" aria-pressed="false">Medium</button>
+    <button class="chip" type="button" data-diff="hard" aria-pressed="false">Hard</button>
+    <button class="chip" type="button" id="random-problem" data-topic="tree">🎲 Random unsolved</button>
+  </div>
+
+  <ul class="plist" id="problem-list"></ul>
+  <p class="empty" id="problem-empty" style="display:none">No problem matches that filter.</p>
+  <p style="font-size:.84rem;color:var(--text-faint);margin-top:1rem">
+    Problems marked <em>Premium</em> need a paid LeetCode account — everything else is free.
+    Links were checked against each judge's current problem slug; if one ever moves, search the title on the judge's site.
+  </p>
+</section>
+<div class="pager">
+  <a class="card" href="graph.html"><span>← Previous</span><b>Graph · 그래프</b></a>
+  <a class="card" href="index.html" style="text-align:right"><span>Finished the syllabus →</span><b>Back to the hub</b></a>
+</div>
+</div>
+</div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p style="margin:0 0 .4rem">
+      <strong>DSA Practice Hub</strong> — a personal study site for a year-long 정보/정보과학 course.
+      All explanations, diagrams and code here are written from scratch; no class material is reproduced.
+    </p>
+    <p style="margin:0">
+      Problem links point to <a href="https://leetcode.com/" target="_blank" rel="noopener">LeetCode</a>,
+      <a href="https://www.acmicpc.net/" target="_blank" rel="noopener">Baekjoon</a> and
+      <a href="https://www.geeksforgeeks.org/" target="_blank" rel="noopener">GeeksforGeeks</a>;
+      those problems belong to their respective judges. Progress is stored only in this browser.
+    </p>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

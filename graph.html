@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Graph (그래프) — DSA Practice Hub</title>
+<meta name="description" content="Vertices, edges, degree and paths, the four graph types, and adjacency matrix versus adjacency list with Python code.">
+<meta name="color-scheme" content="dark light">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%238b5cf6'/%3E%3Ctext x='50' y='70' font-size='56' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='bold'%3EDS%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="stylesheet" href="assets/styles.css">
+<script>try{document.documentElement.setAttribute('data-theme',localStorage.getItem('dsa-hub:theme')||'dark');}catch(e){}</script>
+</head>
+<body data-topic="graph">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#ec4899"/></linearGradient>
+</defs></svg>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">DS</span><span class="brand-text">DSA Practice Hub</span>
+    </a>
+    <nav class="nav-links" aria-label="Topics">
+        <a href="sorting.html">Sorting <span style="opacity:.55">정렬</span></a>
+        <a href="queue.html">Queue <span style="opacity:.55">큐</span></a>
+        <a href="linked-list.html">Linked List <span style="opacity:.55">연결 리스트</span></a>
+        <a href="graph.html" aria-current="page">Graph <span style="opacity:.55">그래프</span></a>
+        <a href="tree.html">Tree <span style="opacity:.55">트리</span></a>
+    </nav>
+    <button class="theme-toggle" data-theme-toggle type="button" aria-label="Toggle colour theme">☀</button>
+  </div>
+</header>
+<main class="wrap">
+<div class="page-head" style="--grad: var(--grad-graph); --c-accent: var(--c-graph)">
+  <div class="topic-icon">◈</div>
+  <div class="topic-step" style="margin-top:.9rem">Unit 04</div>
+  <h1>Graph <span class="ko">그래프</span></h1>
+  <p class="lead" style="max-width:62ch">Lists and trees force data into a line or a hierarchy. A graph drops both constraints: anything may connect to anything. That is why graphs model roads, friendships, prerequisites and web links.</p>
+</div>
+<div class="layout">
+<aside class="card toc" style="--c-accent: var(--c-graph)">
+    <b>On this page</b>
+    <a href="#origin">Where it started</a>
+    <a href="#basics">G = (V, E)</a>
+    <a href="#types">Four kinds of graph</a>
+    <a href="#terms">Vocabulary</a>
+    <a href="#repr">Two representations</a>
+    <a href="#exercise">Try it yourself</a>
+    <a href="#practice">Practice problems</a>
+</aside>
+<div>
+
+
+<section id="origin" style="--grad: var(--grad-graph)">
+  <h2 class="section-title">Where it started</h2>
+  <p>
+    Eighteenth-century Königsberg was built across both banks of a river and two islands, joined by seven
+    bridges. A local puzzle asked: can you take a walk that crosses every bridge exactly once?
+  </p>
+  <p>
+    People tried routes for years and always failed, but failing repeatedly is not a proof. In 1736 Leonhard
+    Euler settled it by throwing the map away. Distances, bridge lengths, street layouts — none of it
+    mattered. Only two things did: how many land masses there were, and which pairs of them were joined.
+    He redrew the city as four dots and seven connections.
+  </p>
+  <p>
+    In that stripped-down picture the answer falls out. Every time your walk enters a land mass it must also
+    leave, so each land mass needs an even number of bridges — except possibly where you start and where you
+    finish. In Königsberg <em>all four</em> land masses had an odd number of bridges. Such a walk cannot
+    exist, and no amount of trying would ever have found one.
+  </p>
+  <div class="note">
+    <b>The idea worth keeping.</b>
+    <p>
+      Euler's move was the invention of graph theory: discard the geometry, keep the connections. Once a
+      problem is reduced to "what is connected to what", the same handful of algorithms solves it — whether
+      the dots are bridges, subway stations, course prerequisites or people.
+    </p>
+  </div>
+</section>
+
+<section id="basics" style="--grad: var(--grad-graph)">
+  <h2 class="section-title">G = (V, E)</h2>
+  <p>
+    A graph is written <code>G = (V, E)</code>: a set of <strong>vertices</strong> (the dots, also called
+    nodes) and a set of <strong>edges</strong> (the connections). Nothing else is required — no root, no
+    order, no limit on how many edges a vertex may have.
+  </p>
+  <p>For the four-vertex graph drawn below, the set notation is:</p>
+  <div class="kv">
+    <div><b>Undirected</b><span><code>V(G) = {A, B, C, D}</code><br><code>E(G) = {(A,B), (A,C), (B,D), (C,D)}</code></span></div>
+    <div><b>Directed</b><span><code>V(G) = {A, B, C, D}</code><br><code>E(G) = {&lt;A,B&gt;, &lt;A,C&gt;, &lt;B,D&gt;, &lt;C,D&gt;}</code></span></div>
+  </div>
+  <p>
+    The brackets carry the meaning. Round brackets <code>(A,B)</code> are an <em>unordered</em> pair — the
+    edge runs both ways, so <code>(A,B)</code> and <code>(B,A)</code> are the same edge. Angle brackets
+    <code>&lt;A,B&gt;</code> are an <em>ordered</em> pair — the edge goes from A to B only, and
+    <code>&lt;B,A&gt;</code> would be a different edge that may or may not exist.
+  </p>
+</section>
+
+<section id="types" style="--grad: var(--grad-graph)">
+  <h2 class="section-title">Four kinds of graph</h2>
+  <p>
+    Two independent yes/no choices — are edges one-way, and do edges carry a number? — give four
+    combinations. Same four vertices in each picture:
+  </p>
+<div class="diagram-grid">
+  <div class="card diagram"><h4>Undirected, unweighted</h4><p>A friendship network</p><svg viewBox="0 0 208 150" role="img" aria-label="example graph"><line class="dg-edge" x1="63.0" y1="34.0" x2="145.0" y2="34.0"/><line class="dg-edge" x1="42.0" y1="55.0" x2="42.0" y2="95.0"/><line class="dg-edge" x1="166.0" y1="55.0" x2="166.0" y2="95.0"/><line class="dg-edge" x1="63.0" y1="116.0" x2="145.0" y2="116.0"/><circle class="dg-node" cx="42" cy="34" r="19"/><text class="dg-label" x="42" y="35">A</text><circle class="dg-node" cx="166" cy="34" r="19"/><text class="dg-label" x="166" y="35">B</text><circle class="dg-node" cx="42" cy="116" r="19"/><text class="dg-label" x="42" y="117">C</text><circle class="dg-node" cx="166" cy="116" r="19"/><text class="dg-label" x="166" y="117">D</text></svg></div>
+  <div class="card diagram"><h4>Directed, unweighted</h4><p>"Who follows whom"</p><svg viewBox="0 0 208 150" role="img" aria-label="example graph"><defs><marker id="ah-d1" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--text-faint)" stroke="none"/></marker></defs><line class="dg-edge" x1="68.0" y1="34.0" x2="140.0" y2="34.0" marker-end="url(#ah-d1)"/><line class="dg-edge" x1="42.0" y1="60.0" x2="42.0" y2="90.0" marker-end="url(#ah-d1)"/><line class="dg-edge" x1="166.0" y1="60.0" x2="166.0" y2="90.0" marker-end="url(#ah-d1)"/><line class="dg-edge" x1="68.0" y1="116.0" x2="140.0" y2="116.0" marker-end="url(#ah-d1)"/><circle class="dg-node" cx="42" cy="34" r="19"/><text class="dg-label" x="42" y="35">A</text><circle class="dg-node" cx="166" cy="34" r="19"/><text class="dg-label" x="166" y="35">B</text><circle class="dg-node" cx="42" cy="116" r="19"/><text class="dg-label" x="42" y="117">C</text><circle class="dg-node" cx="166" cy="116" r="19"/><text class="dg-label" x="166" y="117">D</text></svg></div>
+  <div class="card diagram"><h4>Undirected, weighted</h4><p>Roads with distances</p><svg viewBox="0 0 208 150" role="img" aria-label="example graph"><line class="dg-edge" x1="63.0" y1="34.0" x2="145.0" y2="34.0"/><rect x="94.0" y="27.0" width="20" height="14" rx="4" fill="var(--bg-2)"/><text class="dg-weight" x="104.0" y="38.0">4</text><line class="dg-edge" x1="42.0" y1="55.0" x2="42.0" y2="95.0"/><rect x="32.0" y="68.0" width="20" height="14" rx="4" fill="var(--bg-2)"/><text class="dg-weight" x="42.0" y="79.0">2</text><line class="dg-edge" x1="166.0" y1="55.0" x2="166.0" y2="95.0"/><rect x="156.0" y="68.0" width="20" height="14" rx="4" fill="var(--bg-2)"/><text class="dg-weight" x="166.0" y="79.0">5</text><line class="dg-edge" x1="63.0" y1="116.0" x2="145.0" y2="116.0"/><rect x="94.0" y="109.0" width="20" height="14" rx="4" fill="var(--bg-2)"/><text class="dg-weight" x="104.0" y="120.0">1</text><circle class="dg-node" cx="42" cy="34" r="19"/><text class="dg-label" x="42" y="35">A</text><circle class="dg-node" cx="166" cy="34" r="19"/><text class="dg-label" x="166" y="35">B</text><circle class="dg-node" cx="42" cy="116" r="19"/><text class="dg-label" x="42" y="117">C</text><circle class="dg-node" cx="166" cy="116" r="19"/><text class="dg-label" x="166" y="117">D</text></svg></div>
+  <div class="card diagram"><h4>Directed, weighted</h4><p>One-way routes with costs</p><svg viewBox="0 0 208 150" role="img" aria-label="example graph"><defs><marker id="ah-d2" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--text-faint)" stroke="none"/></marker></defs><line class="dg-edge" x1="68.0" y1="34.0" x2="140.0" y2="34.0" marker-end="url(#ah-d2)"/><rect x="94.0" y="27.0" width="20" height="14" rx="4" fill="var(--bg-2)"/><text class="dg-weight" x="104.0" y="38.0">4</text><line class="dg-edge" x1="42.0" y1="60.0" x2="42.0" y2="90.0" marker-end="url(#ah-d2)"/><rect x="32.0" y="68.0" width="20" height="14" rx="4" fill="var(--bg-2)"/><text class="dg-weight" x="42.0" y="79.0">2</text><line class="dg-edge" x1="166.0" y1="60.0" x2="166.0" y2="90.0" marker-end="url(#ah-d2)"/><rect x="156.0" y="68.0" width="20" height="14" rx="4" fill="var(--bg-2)"/><text class="dg-weight" x="166.0" y="79.0">5</text><line class="dg-edge" x1="68.0" y1="116.0" x2="140.0" y2="116.0" marker-end="url(#ah-d2)"/><rect x="94.0" y="109.0" width="20" height="14" rx="4" fill="var(--bg-2)"/><text class="dg-weight" x="104.0" y="120.0">1</text><circle class="dg-node" cx="42" cy="34" r="19"/><text class="dg-label" x="42" y="35">A</text><circle class="dg-node" cx="166" cy="34" r="19"/><text class="dg-label" x="166" y="35">B</text><circle class="dg-node" cx="42" cy="116" r="19"/><text class="dg-label" x="42" y="117">C</text><circle class="dg-node" cx="166" cy="116" r="19"/><text class="dg-label" x="166" y="117">D</text></svg></div>
+</div>
+  <ul>
+    <li><strong>Undirected (무방향):</strong> the relation is mutual. Friendship, shared borders, a two-way street.</li>
+    <li><strong>Directed (방향):</strong> the relation has a source and a target. Following an account, a prerequisite course, a one-way street.</li>
+    <li><strong>Unweighted:</strong> an edge either exists or it does not.</li>
+    <li><strong>Weighted (가중치):</strong> each edge carries a number — distance, cost, time, capacity. Shortest-path algorithms need this.</li>
+  </ul>
+</section>
+
+<section id="terms" style="--grad: var(--grad-graph)">
+  <h2 class="section-title">Vocabulary</h2>
+  <div class="kv">
+    <div><b>Adjacent · 인접</b><span>Two vertices joined by an edge are adjacent, and each is a <em>neighbour</em> of the other. In the diagrams above, A and B are adjacent; A and D are not.</span></div>
+    <div><b>Incident</b><span>An edge is incident to the two vertices it joins. Vertices are adjacent to each other; edges are incident to vertices.</span></div>
+    <div><b>Degree · 차수</b><span>How many edges touch a vertex. Every vertex in the example graph has degree 2.</span></div>
+    <div><b>In-degree / out-degree</b><span>For directed graphs the count splits: edges arriving versus edges leaving. In the directed example, A has in-degree 0 and out-degree 2; D has in-degree 2 and out-degree 0.</span></div>
+    <div><b>Path · 경로</b><span>A sequence of vertices where each consecutive pair is joined by an edge, such as A → B → D. Its length is the number of edges, not vertices.</span></div>
+    <div><b>Cycle · 사이클</b><span>A path that returns to where it started without reusing an edge. A → B → D → C → A is a cycle.</span></div>
+    <div><b>Connected · 연결</b><span>A graph is connected if a path exists between every pair of vertices. Otherwise it splits into separate <em>components</em>.</span></div>
+    <div><b>Handshake rule</b><span>Each edge adds 1 to the degree of both endpoints, so the degrees of all vertices sum to exactly twice the number of edges.</span></div>
+  </div>
+</section>
+
+<section id="repr" style="--grad: var(--grad-graph)">
+  <h2 class="section-title">Two representations</h2>
+  <p>
+    Drawing a graph is for humans. A program needs the edge set in a data structure, and there are two
+    standard choices.
+  </p>
+
+  <h3>Adjacency matrix · 인접 행렬</h3>
+  <p>
+    An <code>n × n</code> table. Cell <code>[i][j]</code> is 1 when an edge runs from <code>i</code> to
+    <code>j</code>, or 0 when it does not — or the edge's weight, for a weighted graph. An undirected graph
+    gives a symmetric table: <code>matrix[i][j] == matrix[j][i]</code> always.
+  </p>
+<div class="code-card">
+  <div class="code-head"><span>graph_matrix.py</span><button class="copy-btn" type="button">copy</button></div>
+  <pre class="language-python"><code class="language-python">class GraphMatrix:
+    &quot;&quot;&quot;Adjacency matrix: an n x n table where cell [i][j] describes edge i -&gt; j.&quot;&quot;&quot;
+
+    def __init__(self, n):
+        self.n = n
+        self.matrix = [[0] * n for _ in range(n)]
+
+    def add_edge(self, a, b, weight=1, directed=False):
+        self.matrix[a][b] = weight
+        if not directed:
+            self.matrix[b][a] = weight      # symmetric table for an undirected graph
+
+    def has_edge(self, a, b):
+        return self.matrix[a][b] != 0       # O(1) - the whole point of a matrix
+
+    def neighbours(self, v):
+        return [j for j in range(self.n) if self.matrix[v][j]]   # O(n), even for 1 neighbour
+
+    def degree(self, v):
+        return sum(1 for x in self.matrix[v] if x)               # out-degree if directed
+
+    def in_degree(self, v):
+        return sum(1 for row in self.matrix if row[v])
+
+
+g = GraphMatrix(4)                          # 0=A 1=B 2=C 3=D
+for a, b in [(0, 1), (0, 2), (1, 3), (2, 3)]:
+    g.add_edge(a, b)
+for row in g.matrix:
+    print(row)
+# [0, 1, 1, 0]
+# [1, 0, 0, 1]
+# [1, 0, 0, 1]
+# [0, 1, 1, 0]</code></pre>
+</div>
+  <h3>Adjacency list · 인접 리스트</h3>
+  <p>
+    Store, for each vertex, only the vertices it actually connects to. A dictionary of lists does the job in
+    Python. Nothing is stored for edges that do not exist.
+  </p>
+<div class="code-card">
+  <div class="code-head"><span>graph_list.py</span><button class="copy-btn" type="button">copy</button></div>
+  <pre class="language-python"><code class="language-python">from collections import defaultdict, deque
+
+
+class GraphList:
+    &quot;&quot;&quot;Adjacency list: each vertex maps to the vertices it connects to.&quot;&quot;&quot;
+
+    def __init__(self):
+        self.adjacent = defaultdict(list)
+
+    def add_edge(self, a, b, directed=False):
+        self.adjacent[a].append(b)
+        if not directed:
+            self.adjacent[b].append(a)
+
+    def neighbours(self, v):
+        return self.adjacent[v]             # O(1) to reach, O(deg(v)) to read
+
+    def degree(self, v):
+        return len(self.adjacent[v])
+
+    def reachable(self, start, goal):
+        &quot;&quot;&quot;Breadth-first search: is there a path from `start` to `goal`?&quot;&quot;&quot;
+        seen = {start}
+        queue = deque([start])              # the queue from Unit 02, doing real work
+        while queue:
+            v = queue.popleft()
+            if v == goal:
+                return True
+            for nxt in self.adjacent[v]:
+                if nxt not in seen:
+                    seen.add(nxt)
+                    queue.append(nxt)
+        return False
+
+
+g = GraphList()
+for a, b in [(&quot;A&quot;, &quot;B&quot;), (&quot;A&quot;, &quot;C&quot;), (&quot;B&quot;, &quot;D&quot;), (&quot;C&quot;, &quot;D&quot;)]:
+    g.add_edge(a, b)
+print(dict(g.adjacent))       # {&#x27;A&#x27;: [&#x27;B&#x27;, &#x27;C&#x27;], &#x27;B&#x27;: [&#x27;A&#x27;, &#x27;D&#x27;], &#x27;C&#x27;: [&#x27;A&#x27;, &#x27;D&#x27;], &#x27;D&#x27;: [&#x27;B&#x27;, &#x27;C&#x27;]}
+print(g.degree(&quot;A&quot;), g.reachable(&quot;A&quot;, &quot;D&quot;))    # 2 True</code></pre>
+</div>
+  <h3>Which one?</h3>
+  <div class="table-scroll">
+  <table class="data">
+    <thead><tr><th>&nbsp;</th><th>Adjacency matrix</th><th>Adjacency list</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Memory</strong></td><td>O(V²) regardless of edge count</td><td>O(V + E)</td></tr>
+      <tr><td><strong>"Is there an edge i–j?"</strong></td><td>O(1)</td><td>O(degree of i)</td></tr>
+      <tr><td><strong>List all neighbours of i</strong></td><td>O(V) — scan the whole row</td><td>O(degree of i)</td></tr>
+      <tr><td><strong>Add an edge</strong></td><td>O(1)</td><td>O(1)</td></tr>
+      <tr><td><strong>Best for</strong></td><td>Dense graphs, constant-time edge tests</td><td>Sparse graphs — which is most real data</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>
+    A social network with a million users and a hundred friends each is sparse: the list needs ~10⁸ entries,
+    the matrix needs 10¹² cells, almost all zero. That is why nearly every graph problem you will solve on a
+    judge starts by building an adjacency list.
+  </p>
+</section>
+
+<section id="exercise" style="--grad: var(--grad-graph)">
+  <h2 class="section-title">Try it yourself</h2>
+  <p>
+    Here is a floor plan of a small building. Rooms are spaces; the coloured marks are doorways connecting
+    two rooms. Model it as a graph and write out both representations.
+  </p>
+  <div class="card diagram" style="max-width:420px"><svg viewBox="0 0 340 200" role="img" aria-label="floor plan with five rooms" style="max-width:340px">
+  <g fill="var(--surface-2)" stroke="var(--border-strong)" stroke-width="2">
+    <rect x="10" y="10" width="110" height="80" rx="6"/>
+    <rect x="130" y="10" width="90" height="80" rx="6"/>
+    <rect x="230" y="10" width="100" height="180" rx="6"/>
+    <rect x="10" y="100" width="110" height="90" rx="6"/>
+    <rect x="130" y="100" width="90" height="90" rx="6"/>
+  </g>
+  <g class="dg-label" style="font-size:12px">
+    <text x="65" y="50">Lobby</text>
+    <text x="175" y="50">Library</text>
+    <text x="280" y="100">Lab</text>
+    <text x="65" y="145">Studio</text>
+    <text x="175" y="145">Cafe</text>
+  </g>
+  <g stroke="var(--c-graph)" stroke-width="5" stroke-linecap="round">
+    <line x1="122" y1="50" x2="128" y2="50"/>
+    <line x1="222" y1="50" x2="228" y2="50"/>
+    <line x1="65" y1="92" x2="65" y2="98"/>
+    <line x1="175" y1="92" x2="175" y2="98"/>
+    <line x1="122" y1="145" x2="128" y2="145"/>
+    <line x1="222" y1="145" x2="228" y2="145"/>
+  </g>
+</svg></div>
+  <ol>
+    <li>What are the vertices? (Hint: it is the rooms, not the doors.)</li>
+    <li>What are the edges? Should this graph be directed or undirected — can you walk through a doorway in both directions?</li>
+    <li>Write <code>V(G)</code> and <code>E(G)</code> in set notation.</li>
+    <li>Build the 5 × 5 adjacency matrix. Order the rooms Lobby, Library, Lab, Studio, Cafe.</li>
+    <li>Build the adjacency list.</li>
+    <li>What is the degree of each room? Which room is the most connected?</li>
+    <li>Check the handshake rule: do the degrees sum to twice the number of doorways?</li>
+    <li>Now change one doorway into a one-way fire exit. Which representation changes, and how does the matrix stop being symmetric?</li>
+  </ol>
+  <div class="note">
+    <b>Check your answer.</b>
+    <p>
+      Six doorways, five rooms, undirected. Degrees: Lobby 2, Library 3, Lab 2, Studio 2, Cafe 3 — summing
+      to 12, which is 2 × 6 edges. ✔
+    </p>
+  </div>
+</section>
+
+<section id="practice" style="--grad: var(--grad-graph)">
+  <h2 class="section-title">Practice problems</h2>
+  <p>Start with the two Easy problems — both are pure 'build the adjacency structure and read it' drills. The Medium ones add a traversal on top. Tick a box when you solve it — progress is saved in this browser only.</p>
+
+  <div class="card topic-progress" data-progress-topic="graph" style="--grad: var(--grad-graph)">
+    <div class="pbar"><span></span></div>
+    <div class="pnum">0 / 0 solved</div>
+  </div>
+
+  <div class="filters">
+    <input class="search" id="problem-search" type="search" placeholder="Filter by title, hint or judge…" aria-label="Filter problems">
+    <button class="chip" type="button" data-diff="all" aria-pressed="true">All</button>
+    <button class="chip" type="button" data-diff="easy" aria-pressed="false">Easy</button>
+    <button class="chip" type="button" data-diff="medium" aria-pressed="false">Medium</button>
+    <button class="chip" type="button" data-diff="hard" aria-pressed="false">Hard</button>
+    <button class="chip" type="button" id="random-problem" data-topic="graph">🎲 Random unsolved</button>
+  </div>
+
+  <ul class="plist" id="problem-list"></ul>
+  <p class="empty" id="problem-empty" style="display:none">No problem matches that filter.</p>
+  <p style="font-size:.84rem;color:var(--text-faint);margin-top:1rem">
+    Problems marked <em>Premium</em> need a paid LeetCode account — everything else is free.
+    Links were checked against each judge's current problem slug; if one ever moves, search the title on the judge's site.
+  </p>
+</section>
+<div class="pager">
+  <a class="card" href="linked-list.html"><span>← Previous</span><b>Linked List · 연결 리스트</b></a>
+  <a class="card" href="tree.html" style="text-align:right"><span>Next topic →</span><b>Tree · 트리</b></a>
+</div>
+</div>
+</div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p style="margin:0 0 .4rem">
+      <strong>DSA Practice Hub</strong> — a personal study site for a year-long 정보/정보과학 course.
+      All explanations, diagrams and code here are written from scratch; no class material is reproduced.
+    </p>
+    <p style="margin:0">
+      Problem links point to <a href="https://leetcode.com/" target="_blank" rel="noopener">LeetCode</a>,
+      <a href="https://www.acmicpc.net/" target="_blank" rel="noopener">Baekjoon</a> and
+      <a href="https://www.geeksforgeeks.org/" target="_blank" rel="noopener">GeeksforGeeks</a>;
+      those problems belong to their respective judges. Progress is stored only in this browser.
+    </p>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>
