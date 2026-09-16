@@ -141,6 +141,32 @@ a { color: inherit; }
 }
 .theme-toggle:hover { transform: translateY(-2px); border-color: var(--border-strong); }
 
+
+/* ---------------- language switching ----------------
+   Prose is authored twice, inside [data-lang="ko"] / [data-lang="en"]
+   spans; only the active language is displayed. -------- */
+html[data-lang="ko"] [data-lang="en"] { display: none !important; }
+html[data-lang="en"] [data-lang="ko"] { display: none !important; }
+/* Korean wraps better on whole words than mid-phrase */
+html[data-lang="ko"] body { word-break: keep-all; }
+
+.lang-toggle {
+  flex-shrink: 0; height: 38px; min-width: 44px; padding: 0 .7rem;
+  border-radius: 11px; border: 1px solid var(--border); background: var(--surface);
+  color: var(--text-dim); font-family: inherit; font-size: .8rem; font-weight: 700;
+  letter-spacing: .02em; cursor: pointer;
+  transition: transform .18s, border-color .18s, color .18s;
+}
+.lang-toggle:hover { transform: translateY(-2px); border-color: var(--border-strong); color: var(--text); }
+
+.banner {
+  display: flex; gap: .7rem; align-items: flex-start;
+  padding: .85rem 1.1rem; margin: 1.4rem 0 0; border-radius: 14px;
+  background: var(--surface); border: 1px dashed var(--border-strong);
+  font-size: .9rem; color: var(--text-dim);
+}
+.banner b { color: var(--text); }
+
 /* ---------------- hero ---------------- */
 .hero { padding: clamp(3rem, 9vw, 5.5rem) 0 2.5rem; }
 .hero-eyebrow {

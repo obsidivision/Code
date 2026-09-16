@@ -1,15 +1,23 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="ko" data-theme="dark" data-lang="ko">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Tree (트리) — DSA Practice Hub</title>
-<meta name="description" content="Binary trees, array and linked representations, the three traversals, expression trees and binary search trees in Python.">
+<title>트리 (Tree) — DSA 연습 허브</title>
+<meta name="description" content="이진 트리, 배열 표현과 연결 표현, 세 가지 순회, 수식 트리, 그리고 이진 탐색 트리의 탐색·삽입·삭제.">
 <meta name="color-scheme" content="dark light">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%238b5cf6'/%3E%3Ctext x='50' y='70' font-size='56' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='bold'%3EDS%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link rel="stylesheet" href="assets/styles.css">
-<script>try{document.documentElement.setAttribute('data-theme',localStorage.getItem('dsa-hub:theme')||'dark');}catch(e){}</script>
+<script>
+try {
+  var d = document.documentElement;
+  d.setAttribute('data-theme', localStorage.getItem('dsa-hub:theme') || 'dark');
+  var l = localStorage.getItem('dsa-hub:lang') || 'ko';
+  d.setAttribute('data-lang', l);
+  d.setAttribute('lang', l);
+} catch (e) {}
+</script>
 </head>
 <body data-topic="tree">
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -20,77 +28,68 @@
 <header class="nav">
   <div class="nav-inner">
     <a class="brand" href="index.html">
-      <span class="brand-mark">DS</span><span class="brand-text">DSA Practice Hub</span>
+      <span class="brand-mark">DS</span><span class="brand-text"><span data-lang="ko">DSA 연습 허브</span><span data-lang="en">DSA Practice Hub</span></span>
     </a>
-    <nav class="nav-links" aria-label="Topics">
-        <a href="sorting.html">Sorting <span style="opacity:.55">정렬</span></a>
-        <a href="queue.html">Queue <span style="opacity:.55">큐</span></a>
-        <a href="linked-list.html">Linked List <span style="opacity:.55">연결 리스트</span></a>
-        <a href="graph.html">Graph <span style="opacity:.55">그래프</span></a>
-        <a href="tree.html" aria-current="page">Tree <span style="opacity:.55">트리</span></a>
+    <nav class="nav-links" aria-label="단원 / Topics">
+        <a href="queue.html"><span data-lang="ko">큐</span><span data-lang="en">Queue</span></a>
+        <a href="linked-list.html"><span data-lang="ko">연결 리스트</span><span data-lang="en">Linked List</span></a>
+        <a href="graph.html"><span data-lang="ko">그래프</span><span data-lang="en">Graph</span></a>
+        <a href="tree.html" aria-current="page"><span data-lang="ko">트리</span><span data-lang="en">Tree</span></a>
     </nav>
-    <button class="theme-toggle" data-theme-toggle type="button" aria-label="Toggle colour theme">☀</button>
+    <button class="lang-toggle" data-lang-toggle type="button" aria-label="언어 전환 / Switch language">EN</button>
+    <button class="theme-toggle" data-theme-toggle type="button" aria-label="테마 전환 / Toggle theme">☀</button>
   </div>
 </header>
 <main class="wrap">
 <div class="page-head" style="--grad: var(--grad-tree); --c-accent: var(--c-tree)">
   <div class="topic-icon">🌲</div>
-  <div class="topic-step" style="margin-top:.9rem">Unit 05</div>
-  <h1>Tree <span class="ko">트리</span></h1>
-  <p class="lead" style="max-width:62ch">A tree is a graph with no cycles and a designated starting point. That single restriction buys you a hierarchy — and, once you add an ordering rule, searching in O(log n).</p>
+  <div class="topic-step" style="margin-top:.9rem"><span data-lang="ko">5단원</span><span data-lang="en">Unit 05</span></div>
+  <h1><span data-lang="ko">트리 <span class="ko">Tree</span></span><span data-lang="en">Tree <span class="ko">트리</span></span></h1>
+  <p class="lead" style="max-width:62ch"><span data-lang="ko">트리는 사이클이 없고 시작점이 정해져 있는 그래프입니다. 이 제약 하나로 계층 구조를 얻고, 여기에 순서 규칙을 하나 더 얹으면 O(log n) 탐색까지 얻습니다.</span><span data-lang="en">A tree is a graph with no cycles and a designated starting point. That single restriction buys you a hierarchy — and, once you add an ordering rule, searching in O(log n).</span></p>
+  
 </div>
 <div class="layout">
 <aside class="card toc" style="--c-accent: var(--c-tree)">
-    <b>On this page</b>
-    <a href="#binary">Binary trees</a>
-    <a href="#shapes">Special shapes</a>
-    <a href="#repr">Two representations</a>
-    <a href="#traversal">The three traversals</a>
-    <a href="#expr">Expression trees</a>
-    <a href="#bst">Binary search trees</a>
-    <a href="#practice">Practice problems</a>
+    <b>목차</b>
+    <a href="#binary"><span data-lang="ko">이진 트리</span><span data-lang="en">Binary trees</span></a>
+    <a href="#shapes"><span data-lang="ko">특별한 모양</span><span data-lang="en">Special shapes</span></a>
+    <a href="#repr"><span data-lang="ko">두 가지 표현법</span><span data-lang="en">Two representations</span></a>
+    <a href="#traversal"><span data-lang="ko">세 가지 순회</span><span data-lang="en">The three traversals</span></a>
+    <a href="#expr"><span data-lang="ko">수식 트리</span><span data-lang="en">Expression trees</span></a>
+    <a href="#bst"><span data-lang="ko">이진 탐색 트리</span><span data-lang="en">Binary search trees</span></a>
+    <a href="#practice"><span data-lang="ko">연습 문제</span><span data-lang="en">Practice problems</span></a>
 </aside>
 <div>
 
 
 <section id="binary" style="--grad: var(--grad-tree)">
-  <h2 class="section-title">Binary trees</h2>
-  <p>
-    The definition is recursive, and it is worth reading twice because every algorithm on this page is just
-    the definition turned into code:
-  </p>
+  <h2 class="section-title"><span data-lang="ko">이진 트리</span><span data-lang="en">Binary trees</span></h2>
+  <p><span data-lang="ko">정의가 재귀적입니다. 이 페이지의 모든 알고리즘이 결국 이 정의를 코드로 옮긴 것이므로, 두 번 읽어 둘 값어치가 있습니다.</span><span data-lang="en">The definition is recursive, and it is worth reading twice because every algorithm on this page is just the definition turned into code:</span></p>
   <div class="note">
-    <b>A binary tree is either empty, or it is a root node together with two binary trees — its left subtree and its right subtree.</b>
-    <p>
-      "Empty" is a real binary tree, not a special case to patch later. That is why every function below
-      starts with <code>if node is None</code>.
-    </p>
+    <b><span data-lang="ko">이진 트리는 공집합이거나, 루트 노드 하나와 그 자체로 이진 트리인 두 개의 부분 트리(왼쪽·오른쪽)로 이루어진다.</span><span data-lang="en">A binary tree is either empty, or it is a root node together with two binary trees — its left subtree and its right subtree.</span></b>
+    <p><span data-lang="ko">"공집합"도 엄연한 이진 트리이지 나중에 땜질할 예외가 아닙니다. 아래 모든 함수가 <code>if node is None</code>으로 시작하는 이유입니다.</span><span data-lang="en">"Empty" is a real binary tree, not a special case to patch later. That is why every function below starts with <code>if node is None</code>.</span></p>
   </div>
-  <p>Consequences of that definition:</p>
+  <p><span data-lang="ko">이 정의에서 따라 나오는 것들:</span><span data-lang="en">Consequences of that definition:</span></p>
   <ul>
-    <li>Every node has <strong>at most two</strong> children — degree ≤ 2.</li>
-    <li><strong>Left and right are distinguishable.</strong> A root with one left child is a different tree from a root with one right child, even though both have two nodes.</li>
-    <li>Every node except the root has exactly one parent, so an <strong>n-node tree has exactly n − 1 edges</strong> — one edge per node, minus the root which has none above it.</li>
-    <li>There are no cycles, so there is exactly one path from the root to any node.</li>
+    <li><span data-lang="ko">모든 노드의 자식은 <strong>최대 두 개</strong>입니다 — 차수 ≤ 2.</span><span data-lang="en">Every node has <strong>at most two</strong> children — degree ≤ 2.</span></li>
+    <li><span data-lang="ko"><strong>왼쪽과 오른쪽은 구별됩니다.</strong> 왼쪽 자식 하나를 가진 루트와 오른쪽 자식 하나를 가진 루트는 둘 다 노드가 두 개지만 서로 다른 트리입니다.</span><span data-lang="en"><strong>Left and right are distinguishable.</strong> A root with one left child is a different tree from a root with one right child, even though both have two nodes.</span></li>
+    <li><span data-lang="ko">루트를 뺀 모든 노드에 부모가 정확히 하나씩 있으므로, <strong>노드가 n개인 트리의 간선은 정확히 n − 1개</strong>입니다. 노드마다 위로 가는 간선이 하나씩인데 루트만 없는 셈입니다.</span><span data-lang="en">Every node except the root has exactly one parent, so an <strong>n-node tree has exactly n − 1 edges</strong> — one edge per node, minus the root which has none above it.</span></li>
+    <li><span data-lang="ko">사이클이 없으므로 루트에서 어떤 노드로 가는 경로는 단 하나뿐입니다.</span><span data-lang="en">There are no cycles, so there is exactly one path from the root to any node.</span></li>
   </ul>
   <div class="card diagram" style="max-width:380px"><svg viewBox="0 0 330 200" role="img" aria-label="binary search tree" style="max-width:330px"><line class="dg-edge" x1="149.5" y1="44.7" x2="97.5" y2="87.3"/><line class="dg-edge" x1="180.5" y1="44.7" x2="232.5" y2="87.3"/><line class="dg-edge" x1="70.8" y1="116.6" x2="47.2" y2="151.4"/><line class="dg-edge" x1="93.2" y1="116.6" x2="116.8" y2="151.4"/><line class="dg-edge" x1="259.2" y1="116.6" x2="282.8" y2="151.4"/><circle class="dg-node" cx="165" cy="32" r="20"/><text class="dg-label" x="165" y="33">8</text><circle class="dg-node" cx="82" cy="100" r="20"/><text class="dg-label" x="82" y="101">3</text><circle class="dg-node" cx="248" cy="100" r="20"/><text class="dg-label" x="248" y="101">10</text><circle class="dg-node" cx="36" cy="168" r="20"/><text class="dg-label" x="36" y="169">1</text><circle class="dg-node" cx="128" cy="168" r="20"/><text class="dg-label" x="128" y="169">6</text><circle class="dg-node" cx="294" cy="168" r="20"/><text class="dg-label" x="294" y="169">14</text></svg>
-  <p style="margin-top:.5rem">6 nodes, 5 edges, height 3</p></div>
+  <p style="margin-top:.5rem"><span data-lang="ko">노드 6개, 간선 5개, 높이 3</span><span data-lang="en">6 nodes, 5 edges, height 3</span></p></div>
 </section>
 
 <section id="shapes" style="--grad: var(--grad-tree)">
-  <h2 class="section-title">Special shapes and height limits</h2>
+  <h2 class="section-title"><span data-lang="ko">특별한 모양과 높이의 한계</span><span data-lang="en">Special shapes and height limits</span></h2>
   <div class="kv">
-    <div><b>Full / perfect · 포화 이진 트리</b><span>Every level is completely filled. A perfect tree of height <em>h</em> holds exactly 2<sup>h</sup> − 1 nodes, and level <em>k</em> holds 2<sup>k−1</sup> of them.</span></div>
-    <div><b>Complete · 완전 이진 트리</b><span>Every level is filled except possibly the last, and the last fills strictly left to right with no gaps. This is the shape that stores perfectly in an array.</span></div>
-    <div><b>Skewed · 편향 이진 트리</b><span>Every node has only one child, so the tree degenerates into a linked list. This is the worst case that ruins a BST's performance.</span></div>
+    <div><b>포화 이진 트리 · Full / perfect</b><span><span data-lang="ko">모든 레벨이 빈틈없이 꽉 찬 트리입니다. 높이가 <em>h</em>인 포화 이진 트리의 노드 수는 정확히 2<sup>h</sup> − 1개이고, <em>k</em>번째 레벨에는 2<sup>k−1</sup>개가 있습니다.</span><span data-lang="en">Every level is completely filled. A perfect tree of height <em>h</em> holds exactly 2<sup>h</sup> − 1 nodes, and level <em>k</em> holds 2<sup>k−1</sup> of them.</span></span></div>
+    <div><b>완전 이진 트리 · Complete</b><span><span data-lang="ko">마지막 레벨을 뺀 모든 레벨이 꽉 차 있고, 마지막 레벨은 왼쪽부터 빈틈없이 채워진 트리입니다. 배열에 딱 맞게 저장되는 모양입니다.</span><span data-lang="en">Every level is filled except possibly the last, and the last fills strictly left to right with no gaps. This is the shape that stores perfectly in an array.</span></span></div>
+    <div><b>편향 이진 트리 · Skewed</b><span><span data-lang="ko">모든 노드가 자식을 하나씩만 가져서 사실상 연결 리스트가 된 트리입니다. 이진 탐색 트리의 성능을 망치는 최악의 경우입니다.</span><span data-lang="en">Every node has only one child, so the tree degenerates into a linked list. This is the worst case that ruins a BST's performance.</span></span></div>
   </div>
-  <p>
-    For <em>n</em> nodes, the <strong>minimum</strong> possible height is ⌈log₂(n + 1)⌉ — achieved when the
-    tree is as bushy as possible — and the <strong>maximum</strong> is <em>n</em>, when the tree is a single
-    skewed chain. The whole promise of tree-based searching rests on staying near the minimum.
-  </p>
+  <p><span data-lang="ko">노드가 <em>n</em>개일 때 <strong>가능한 최소 높이</strong>는 ⌈log₂(n + 1)⌉로, 트리가 최대한 옆으로 퍼졌을 때입니다. <strong>최대 높이</strong>는 <em>n</em>으로, 한 줄로 편향되었을 때입니다. 트리 기반 탐색이 주는 이점은 전부 이 최소 높이 근처에 머무는 데 달려 있습니다.</span><span data-lang="en">For <em>n</em> nodes, the <strong>minimum</strong> possible height is ⌈log₂(n + 1)⌉ — achieved when the tree is as bushy as possible — and the <strong>maximum</strong> is <em>n</em>, when the tree is a single skewed chain. The whole promise of tree-based searching rests on staying near the minimum.</span></p>
 <div class="code-card">
-  <div class="code-head"><span>tree_node.py</span><button class="copy-btn" type="button">copy</button></div>
+  <div class="code-head"><span>tree_node.py</span><button class="copy-btn" type="button">복사</button></div>
   <pre class="language-python"><code class="language-python">class TreeNode:
     def __init__(self, data, left=None, right=None):
         self.data = data
@@ -126,19 +125,16 @@ print(count(root), height(root))      # 6 3</code></pre>
 </section>
 
 <section id="repr" style="--grad: var(--grad-tree)">
-  <h2 class="section-title">Two representations</h2>
-  <h3>Array-based</h3>
-  <p>
-    Number the nodes level by level, left to right, starting at 1, and store each node at that index. Then
-    the structure is pure arithmetic — no pointers at all:
-  </p>
+  <h2 class="section-title"><span data-lang="ko">두 가지 표현법</span><span data-lang="en">Two representations</span></h2>
+  <h3><span data-lang="ko">배열 표현</span><span data-lang="en">Array-based</span></h3>
+  <p><span data-lang="ko">노드에 레벨 순서로, 각 레벨은 왼쪽에서 오른쪽으로, 1부터 번호를 매기고 그 번호를 인덱스로 씁니다. 그러면 구조가 전부 산술 계산이 됩니다. 포인터가 아예 없습니다.</span><span data-lang="en">Number the nodes level by level, left to right, starting at 1, and store each node at that index. Then the structure is pure arithmetic — no pointers at all:</span></p>
   <div class="kv">
-    <div><b>Parent of i</b><span><code>i // 2</code></span></div>
-    <div><b>Left child of i</b><span><code>2 * i</code></span></div>
-    <div><b>Right child of i</b><span><code>2 * i + 1</code></span></div>
+    <div><b><span data-lang="ko">i의 부모</span><span data-lang="en">Parent of i</span></b><span><code>i // 2</code></span></div>
+    <div><b><span data-lang="ko">i의 왼쪽 자식</span><span data-lang="en">Left child of i</span></b><span><code>2 * i</code></span></div>
+    <div><b><span data-lang="ko">i의 오른쪽 자식</span><span data-lang="en">Right child of i</span></b><span><code>2 * i + 1</code></span></div>
   </div>
 <div class="code-card">
-  <div class="code-head"><span>array_tree.py</span><button class="copy-btn" type="button">copy</button></div>
+  <div class="code-head"><span>array_tree.py</span><button class="copy-btn" type="button">복사</button></div>
   <pre class="language-python"><code class="language-python"># 1-indexed array representation; index 0 is left unused so the arithmetic stays clean.
 tree = [None, 8, 3, 10, 1, 6, None, 14]
 #              1  2   3  4  5     6   7
@@ -150,32 +146,21 @@ def right_child(i): return 2 * i + 1
 print(tree[left_child(2)], tree[right_child(2)])   # 1 6   (children of the node holding 3)
 print(tree[parent(5)])                             # 3     (parent of the node holding 6)</code></pre>
 </div>
-  <p>
-    Compact and fast for a <em>complete</em> tree — this is exactly how heaps are stored. For a sparse or
-    skewed tree it is terrible: a skewed tree of 10 nodes needs an array of 2¹⁰ slots, nearly all empty.
-  </p>
-  <h3>Linked</h3>
-  <p>
-    Each node is an object holding <code>data</code>, <code>left</code> and <code>right</code> — the
-    <code>TreeNode</code> class above. Memory is proportional to the number of real nodes regardless of
-    shape, and inserting does not require resizing anything. This is what almost all real code uses, and
-    what every judge problem below hands you.
-  </p>
+  <p><span data-lang="ko"><em>완전</em> 이진 트리에는 간결하고 빠릅니다. 힙을 저장하는 방식이 정확히 이것입니다. 반면 성기거나 편향된 트리에는 최악입니다. 노드 10개짜리 편향 트리에 배열 2¹⁰칸이 필요하고 대부분이 빈칸입니다.</span><span data-lang="en">Compact and fast for a <em>complete</em> tree — this is exactly how heaps are stored. For a sparse or skewed tree it is terrible: a skewed tree of 10 nodes needs an array of 2¹⁰ slots, nearly all empty.</span></p>
+  <h3><span data-lang="ko">연결 표현</span><span data-lang="en">Linked</span></h3>
+  <p><span data-lang="ko">각 노드가 <code>data</code>, <code>left</code>, <code>right</code>를 갖는 객체입니다. 위의 <code>TreeNode</code> 클래스가 그것입니다. 모양과 상관없이 실제 노드 수에 비례하는 메모리만 쓰고, 삽입할 때 크기를 다시 잡을 필요도 없습니다. 실제 코드는 거의 전부 이 방식을 쓰고, 아래 저지 문제들도 모두 이 형태로 트리를 건네줍니다.</span><span data-lang="en">Each node is an object holding <code>data</code>, <code>left</code> and <code>right</code> — the <code>TreeNode</code> class above. Memory is proportional to the number of real nodes regardless of shape, and inserting does not require resizing anything. This is what almost all real code uses, and what every judge problem below hands you.</span></p>
 </section>
 
 <section id="traversal" style="--grad: var(--grad-tree)">
-  <h2 class="section-title">The three traversals</h2>
-  <p>
-    A list has one obvious order. A tree does not, so you pick one. All three traversals visit the left
-    subtree before the right; they differ only in <em>when the node itself is visited</em>.
-  </p>
+  <h2 class="section-title"><span data-lang="ko">세 가지 순회</span><span data-lang="en">The three traversals</span></h2>
+  <p><span data-lang="ko">리스트에는 당연한 순서가 하나 있지만 트리에는 없습니다. 그래서 골라야 합니다. 세 순회 모두 오른쪽보다 왼쪽 부분 트리를 먼저 방문하고, 차이는 오직 <em>노드 자신을 언제 방문하는가</em>뿐입니다.</span><span data-lang="en">A list has one obvious order. A tree does not, so you pick one. All three traversals visit the left subtree before the right; they differ only in <em>when the node itself is visited</em>.</span></p>
   <div class="kv">
-    <div><b>Preorder · 전위 (VLR)</b><span>Node first, then left, then right. Use it to copy a tree or to print a structure top-down.</span></div>
-    <div><b>Inorder · 중위 (LVR)</b><span>Left, node, right. On a BST this emits the keys in sorted order.</span></div>
-    <div><b>Postorder · 후위 (LRV)</b><span>Both children first, node last. Use it whenever a node's result depends on its children — evaluating, or freeing memory.</span></div>
+    <div><b>전위 순회 · Preorder (VLR)</b><span><span data-lang="ko">노드 먼저, 그다음 왼쪽, 그다음 오른쪽. 트리를 복사하거나 구조를 위에서부터 출력할 때 씁니다.</span><span data-lang="en">Node first, then left, then right. Use it to copy a tree or to print a structure top-down.</span></span></div>
+    <div><b>중위 순회 · Inorder (LVR)</b><span><span data-lang="ko">왼쪽, 노드, 오른쪽. 이진 탐색 트리에서는 키가 정렬된 순서로 나옵니다.</span><span data-lang="en">Left, node, right. On a BST this emits the keys in sorted order.</span></span></div>
+    <div><b>후위 순회 · Postorder (LRV)</b><span><span data-lang="ko">자식 둘을 모두 끝낸 뒤 노드를 방문합니다. 노드의 결과가 자식에 의존할 때 — 계산이나 메모리 해제 같은 경우 — 쓰는 순서입니다.</span><span data-lang="en">Both children first, node last. Use it whenever a node's result depends on its children — evaluating, or freeing memory.</span></span></div>
   </div>
 <div class="code-card">
-  <div class="code-head"><span>traversals.py</span><button class="copy-btn" type="button">copy</button></div>
+  <div class="code-head"><span>traversals.py</span><button class="copy-btn" type="button">복사</button></div>
   <pre class="language-python"><code class="language-python">def preorder(node, out=None):
     &quot;&quot;&quot;VLR - visit the node, then the left subtree, then the right.&quot;&quot;&quot;
     if out is None:
@@ -213,38 +198,19 @@ print(preorder(root))    # [8, 3, 1, 6, 10, 14]
 print(inorder(root))     # [1, 3, 6, 8, 10, 14]   &lt;- sorted, because this is a BST
 print(postorder(root))   # [1, 6, 3, 14, 10, 8]</code></pre>
 </div>
-  <p style="font-size:.9rem;color:var(--text-faint)">
-    Reading trick: the letter V tells you where the node goes. Pre = V first, In = V in the middle,
-    Post = V last. L always comes before R.
-  </p>
+  <p style="font-size:.9rem;color:var(--text-faint)"><span data-lang="ko">외우는 요령: V(방문)가 어디에 오는지가 이름입니다. 전위는 V가 맨 앞, 중위는 가운데, 후위는 맨 뒤. L은 언제나 R보다 앞입니다.</span><span data-lang="en">Reading trick: the letter V tells you where the node goes. Pre = V first, In = V in the middle, Post = V last. L always comes before R.</span></p>
 </section>
 
 <section id="expr" style="--grad: var(--grad-tree)">
-  <h2 class="section-title">Expression trees</h2>
-  <p>
-    An expression tree stores an arithmetic expression as a tree: <strong>operators at the internal
-    nodes, operands at the leaves</strong>. The tree below is <code>4 * (5 - (7 + 2))</code>.
-  </p>
+  <h2 class="section-title"><span data-lang="ko">수식 트리</span><span data-lang="en">Expression trees</span></h2>
+  <p><span data-lang="ko">수식 트리는 산술식을 트리로 저장한 것입니다. <strong>연산자는 내부 노드에, 피연산자는 잎에</strong> 놓입니다. 아래 트리는 <code>4 * (5 - (7 + 2))</code>입니다.</span><span data-lang="en">An expression tree stores an arithmetic expression as a tree: <strong>operators at the internal nodes, operands at the leaves</strong>. The tree below is <code>4 * (5 - (7 + 2))</code>.</span></p>
   <div class="card diagram" style="max-width:460px"><svg viewBox="0 0 420 300" role="img" aria-label="expression tree" style="max-width:420px"><line class="dg-edge" x1="144.7" y1="46.9" x2="85.3" y2="97.1"/><line class="dg-edge" x1="175.3" y1="46.9" x2="234.7" y2="97.1"/><line class="dg-edge" x1="237.6" y1="125.7" x2="202.4" y2="170.3"/><line class="dg-edge" x1="264.5" y1="123.8" x2="315.5" y2="172.2"/><line class="dg-edge" x1="319.8" y1="203.2" x2="295.2" y2="244.8"/><line class="dg-edge" x1="341.0" y1="202.7" x2="369.0" y2="245.3"/><circle class="dg-node" cx="160" cy="34" r="20"/><text class="dg-label" x="160" y="35">*</text><circle class="dg-node" cx="70" cy="110" r="20"/><text class="dg-label" x="70" y="111">4</text><circle class="dg-node" cx="250" cy="110" r="20"/><text class="dg-label" x="250" y="111">-</text><circle class="dg-node" cx="190" cy="186" r="20"/><text class="dg-label" x="190" y="187">5</text><circle class="dg-node" cx="330" cy="186" r="20"/><text class="dg-label" x="330" y="187">+</text><circle class="dg-node" cx="285" cy="262" r="20"/><text class="dg-label" x="285" y="263">7</text><circle class="dg-node" cx="380" cy="262" r="20"/><text class="dg-label" x="380" y="263">2</text></svg>
-  <p style="margin-top:.5rem">Postfix: <code>4 5 7 2 + - *</code> &nbsp;·&nbsp; value: −16</p></div>
-  <p>
-    The structure encodes precedence and grouping, so no brackets are needed — the shape of the tree already
-    says that <code>7 + 2</code> happens before the subtraction. Run the three traversals over it and you get
-    the three classic notations: inorder gives infix, preorder gives prefix, postorder gives postfix.
-  </p>
-  <p>
-    <strong>Why evaluation is postorder:</strong> an operator cannot run until both of its operands have
-    values. Postorder finishes both subtrees before visiting the node, which is exactly that requirement. Try
-    to evaluate in preorder and you reach <code>*</code> while neither side is known yet.
-  </p>
-  <p>
-    Building the tree from postfix input uses a stack — the same structure from Unit 03. Read tokens left to
-    right: an operand becomes a leaf and is pushed; an operator pops the two most recent subtrees, becomes
-    their parent, and is pushed back. Pop the two in reverse order, or subtraction and division come out
-    backwards.
-  </p>
+  <p style="margin-top:.5rem"><span data-lang="ko">후위 표기: <code>4 5 7 2 + - *</code> &nbsp;·&nbsp; 값: −16</span><span data-lang="en">Postfix: <code>4 5 7 2 + - *</code> &nbsp;·&nbsp; value: −16</span></p></div>
+  <p><span data-lang="ko">구조 자체가 우선순위와 묶음을 담고 있으므로 괄호가 필요 없습니다. 트리의 모양이 이미 <code>7 + 2</code>가 뺄셈보다 먼저라고 말하고 있습니다. 이 트리에 세 가지 순회를 돌리면 고전적인 세 가지 표기법이 그대로 나옵니다. 중위는 중위 표기, 전위는 전위 표기, 후위는 후위 표기입니다.</span><span data-lang="en">The structure encodes precedence and grouping, so no brackets are needed — the shape of the tree already says that <code>7 + 2</code> happens before the subtraction. Run the three traversals over it and you get the three classic notations: inorder gives infix, preorder gives prefix, postorder gives postfix.</span></p>
+  <p><span data-lang="ko"><strong>계산이 왜 후위 순회인가:</strong> 연산자는 두 피연산자의 값이 모두 정해지기 전에는 실행될 수 없습니다. 후위 순회는 노드를 방문하기 전에 두 부분 트리를 먼저 끝내므로 정확히 그 조건을 만족합니다. 전위 순회로 계산하려고 하면 양쪽 값이 아직 없는 상태에서 <code>*</code>에 도달하게 됩니다.</span><span data-lang="en"><strong>Why evaluation is postorder:</strong> an operator cannot run until both of its operands have values. Postorder finishes both subtrees before visiting the node, which is exactly that requirement. Try to evaluate in preorder and you reach <code>*</code> while neither side is known yet.</span></p>
+  <p><span data-lang="ko">후위 표기 입력으로 트리를 만들 때는 스택을 씁니다. 3단원에서 본 그 구조입니다. 토큰을 왼쪽부터 읽어서, 피연산자면 잎 노드로 만들어 push하고, 연산자면 가장 최근의 부분 트리 두 개를 pop해 그 부모가 된 뒤 다시 push합니다. pop한 두 개의 순서를 뒤집어 붙여야 뺄셈과 나눗셈이 거꾸로 되지 않습니다.</span><span data-lang="en">Building the tree from postfix input uses a stack — the same structure from Unit 03. Read tokens left to right: an operand becomes a leaf and is pushed; an operator pops the two most recent subtrees, becomes their parent, and is pushed back. Pop the two in reverse order, or subtraction and division come out backwards.</span></p>
 <div class="code-card">
-  <div class="code-head"><span>expression_tree.py</span><button class="copy-btn" type="button">copy</button></div>
+  <div class="code-head"><span>expression_tree.py</span><button class="copy-btn" type="button">복사</button></div>
   <pre class="language-python"><code class="language-python">import operator
 
 OPERATORS = {&quot;+&quot;: operator.add, &quot;-&quot;: operator.sub,
@@ -278,47 +244,30 @@ print(evaluate(tree))   # -16.0    which is 4 * (5 - (7 + 2))</code></pre>
 </section>
 
 <section id="bst" style="--grad: var(--grad-tree)">
-  <h2 class="section-title">Binary search trees</h2>
-  <p>
-    A BST adds one ordering rule to the binary tree, and the rule applies to <strong>whole subtrees</strong>,
-    not just to the immediate children:
-  </p>
+  <h2 class="section-title"><span data-lang="ko">이진 탐색 트리</span><span data-lang="en">Binary search trees</span></h2>
+  <p><span data-lang="ko">이진 탐색 트리는 이진 트리에 순서 규칙 하나를 더합니다. 그리고 이 규칙은 바로 아래 자식이 아니라 <strong>부분 트리 전체</strong>에 적용됩니다.</span><span data-lang="en">A BST adds one ordering rule to the binary tree, and the rule applies to <strong>whole subtrees</strong>, not just to the immediate children:</span></p>
   <div class="note">
-    <b>For every node: every key in its left subtree is smaller, and every key in its right subtree is larger.</b>
-    <p>
-      That recursion is the part people get wrong. A node's right child being larger is not enough — a value
-      buried three levels down the right subtree must be larger than the node too.
-    </p>
+    <b><span data-lang="ko">모든 노드에 대해: 왼쪽 부분 트리의 키는 전부 그 노드보다 작고, 오른쪽 부분 트리의 키는 전부 그 노드보다 크다.</span><span data-lang="en">For every node: every key in its left subtree is smaller, and every key in its right subtree is larger.</span></b>
+    <p><span data-lang="ko">사람들이 자주 틀리는 부분이 바로 이 재귀성입니다. 오른쪽 자식이 더 크다는 것만으로는 부족합니다. 오른쪽 부분 트리 세 단계 아래에 묻힌 값도 그 노드보다 커야 합니다.</span><span data-lang="en">That recursion is the part people get wrong. A node's right child being larger is not enough — a value buried three levels down the right subtree must be larger than the node too.</span></p>
   </div>
-  <p>
-    The payoff: at every node one comparison eliminates an entire subtree. On a balanced tree that is
-    O(log n) for search, insert and delete. On a skewed tree it degrades to O(n) — the tree has become a
-    linked list. (Self-balancing variants such as AVL and red-black trees exist to prevent exactly that.)
-  </p>
-  <p>Also worth memorising: <strong>an inorder traversal of a BST prints the keys in sorted order.</strong></p>
+  <p><span data-lang="ko">그 대가로 얻는 것: 모든 노드에서 비교 한 번이 부분 트리 하나를 통째로 지웁니다. 균형 잡힌 트리라면 탐색·삽입·삭제가 O(log n)입니다. 편향된 트리에서는 O(n)으로 떨어집니다. 트리가 연결 리스트가 되어 버린 것이죠. (AVL 트리나 레드-블랙 트리 같은 자가 균형 트리는 바로 그것을 막기 위해 존재합니다.)</span><span data-lang="en">The payoff: at every node one comparison eliminates an entire subtree. On a balanced tree that is O(log n) for search, insert and delete. On a skewed tree it degrades to O(n) — the tree has become a linked list. (Self-balancing variants such as AVL and red-black trees exist to prevent exactly that.)</span></p>
+  <p><span data-lang="ko">이것도 외워 두세요. <strong>이진 탐색 트리를 중위 순회하면 키가 정렬된 순서로 나옵니다.</strong></span><span data-lang="en">Also worth memorising: <strong>an inorder traversal of a BST prints the keys in sorted order.</strong></span></p>
 
-  <h3>Search</h3>
-  <p>Compare with the current node. Equal → found. Smaller → go left. Larger → go right. Hit <code>None</code> → the key is not in the tree.</p>
+  <h3><span data-lang="ko">탐색</span><span data-lang="en">Search</span></h3>
+  <p><span data-lang="ko">현재 노드와 비교합니다. 같으면 찾은 것이고, 작으면 왼쪽으로, 크면 오른쪽으로 갑니다. <code>None</code>에 닿으면 트리에 없는 키입니다.</span><span data-lang="en">Compare with the current node. Equal → found. Smaller → go left. Larger → go right. Hit <code>None</code> → the key is not in the tree.</span></p>
 
-  <h3>Insert</h3>
-  <p>
-    Search for the key. The search will fail, and the <code>None</code> it fails at is precisely the spot the
-    key belongs in — attach the new leaf there. Inserting never restructures an existing node.
-  </p>
+  <h3><span data-lang="ko">삽입</span><span data-lang="en">Insert</span></h3>
+  <p><span data-lang="ko">그 키를 탐색해 봅니다. 탐색은 실패할 것이고, 실패해서 멈춘 그 <code>None</code> 자리가 바로 키가 있어야 할 자리입니다. 거기에 새 잎을 답니다. 삽입은 기존 노드의 구조를 절대 바꾸지 않습니다.</span><span data-lang="en">Search for the key. The search will fail, and the <code>None</code> it fails at is precisely the spot the key belongs in — attach the new leaf there. Inserting never restructures an existing node.</span></p>
 
-  <h3>Delete — three cases</h3>
+  <h3><span data-lang="ko">삭제 — 세 가지 경우</span><span data-lang="en">Delete — three cases</span></h3>
   <ol>
-    <li><strong>Leaf node.</strong> No children to rescue. Unlink it from its parent and you are done.</li>
-    <li><strong>One child.</strong> Splice that child up into the deleted node's place. The whole subtree keeps its ordering relative to everything above.</li>
-    <li><strong>Two children.</strong> You cannot simply remove it — two subtrees would be orphaned. Instead find the node's <em>in-order successor</em>: the smallest key in its right subtree (equivalently, use the largest key in the left subtree). Copy that value into the node, then delete the successor from the right subtree. The successor is the leftmost node of that subtree, so it has no left child — meaning that second deletion is guaranteed to be case 1 or case 2, and the recursion terminates.</li>
+    <li><span data-lang="ko"><strong>잎 노드.</strong> 구할 자식이 없습니다. 부모와의 링크를 끊으면 끝입니다.</span><span data-lang="en"><strong>Leaf node.</strong> No children to rescue. Unlink it from its parent and you are done.</span></li>
+    <li><span data-lang="ko"><strong>자식이 하나.</strong> 그 자식을 삭제된 노드의 자리로 끌어올립니다. 부분 트리 전체가 위쪽과의 순서 관계를 그대로 유지합니다.</span><span data-lang="en"><strong>One child.</strong> Splice that child up into the deleted node's place. The whole subtree keeps its ordering relative to everything above.</span></li>
+    <li><span data-lang="ko"><strong>자식이 둘.</strong> 그냥 지울 수 없습니다. 부분 트리 두 개가 떨어져 나가기 때문입니다. 대신 그 노드의 <em>중위 후속자</em>를 찾습니다. 오른쪽 부분 트리에서 가장 작은 키입니다. (같은 방식으로 왼쪽 부분 트리의 가장 큰 키를 써도 됩니다.) 그 값을 노드에 복사해 넣고, 오른쪽 부분 트리에서 그 후속자를 삭제합니다. 후속자는 그 부분 트리의 가장 왼쪽 노드라 왼쪽 자식이 없으므로, 그 두 번째 삭제는 반드시 1번이나 2번 경우가 되고 재귀가 여기서 끝납니다.</span><span data-lang="en"><strong>Two children.</strong> You cannot simply remove it — two subtrees would be orphaned. Instead find the node's <em>in-order successor</em>: the smallest key in its right subtree (equivalently, use the largest key in the left subtree). Copy that value into the node, then delete the successor from the right subtree. The successor is the leftmost node of that subtree, so it has no left child — meaning that second deletion is guaranteed to be case 1 or case 2, and the recursion terminates.</span></li>
   </ol>
-  <p>
-    Why the successor specifically? It is the next key in sorted order, so it is larger than everything in
-    the left subtree and smaller than everything else in the right subtree. It is the only value that can sit
-    in that position without breaking the BST rule.
-  </p>
+  <p><span data-lang="ko">왜 하필 후속자일까요? 후속자는 정렬 순서에서 바로 다음 키이므로, 왼쪽 부분 트리의 모든 값보다 크고 오른쪽 부분 트리의 나머지 모든 값보다 작습니다. 이진 탐색 트리 규칙을 깨지 않고 그 자리에 앉을 수 있는 값은 그것뿐입니다.</span><span data-lang="en">Why the successor specifically? It is the next key in sorted order, so it is larger than everything in the left subtree and smaller than everything else in the right subtree. It is the only value that can sit in that position without breaking the BST rule.</span></p>
 <div class="code-card">
-  <div class="code-head"><span>bst.py</span><button class="copy-btn" type="button">copy</button></div>
+  <div class="code-head"><span>bst.py</span><button class="copy-btn" type="button">복사</button></div>
   <pre class="language-python"><code class="language-python">def bst_search(node, key):
     &quot;&quot;&quot;Iterative search - one comparison decides the whole direction.&quot;&quot;&quot;
     while node is not None:
@@ -377,33 +326,30 @@ print(inorder(tree))                       # [1, 4, 6, 7, 8, 10, 14]</code></pre
 </section>
 
 <section id="practice" style="--grad: var(--grad-tree)">
-  <h2 class="section-title">Practice problems</h2>
-  <p>The three traversal problems come first for a reason — get those automatic, and the BST problems become small variations on code you already have. Going further once these are done: <a href="https://leetcode.com/problems/validate-binary-search-tree/" target="_blank" rel="noopener">LC 98 Validate Binary Search Tree</a> (it catches you if you think the BST rule is only about direct children) and <a href="https://www.acmicpc.net/problem/1991" target="_blank" rel="noopener">BOJ 1991 트리 순회</a>, which asks for all three traversals of one tree in a single program. Tick a box when you solve it — progress is saved in this browser only.</p>
+  <h2 class="section-title"><span data-lang="ko">연습 문제</span><span data-lang="en">Practice problems</span></h2>
+  <p><span data-lang="ko">순회 세 문제가 맨 앞에 있는 데는 이유가 있습니다. 그 셋이 손에 익으면 이진 탐색 트리 문제는 이미 가진 코드의 작은 변형이 됩니다. 다 풀었다면 다음으로: <a href="https://leetcode.com/problems/validate-binary-search-tree/" target="_blank" rel="noopener">LC 98 Validate Binary Search Tree</a>(이진 탐색 트리 규칙을 바로 아래 자식에 대한 것으로만 알고 있으면 틀리는 문제입니다)와 <a href="https://www.acmicpc.net/problem/1991" target="_blank" rel="noopener">백준 1991 트리 순회</a>(한 프로그램에서 세 순회를 모두 출력합니다)를 권합니다. 문제를 풀면 체크하세요. 진행 상황은 이 브라우저에만 저장됩니다.</span><span data-lang="en">The three traversal problems come first for a reason — get those automatic, and the BST problems become small variations on code you already have. Going further once these are done: <a href="https://leetcode.com/problems/validate-binary-search-tree/" target="_blank" rel="noopener">LC 98 Validate Binary Search Tree</a> (it catches you if you think the BST rule is only about direct children) and <a href="https://www.acmicpc.net/problem/1991" target="_blank" rel="noopener">BOJ 1991 트리 순회</a>, which asks for all three traversals of one tree in a single program. Tick a box when you solve it — progress is saved in this browser only.</span></p>
 
   <div class="card topic-progress" data-progress-topic="tree" style="--grad: var(--grad-tree)">
     <div class="pbar"><span></span></div>
-    <div class="pnum">0 / 0 solved</div>
+    <div class="pnum">0 / 0</div>
   </div>
 
   <div class="filters">
-    <input class="search" id="problem-search" type="search" placeholder="Filter by title, hint or judge…" aria-label="Filter problems">
-    <button class="chip" type="button" data-diff="all" aria-pressed="true">All</button>
-    <button class="chip" type="button" data-diff="easy" aria-pressed="false">Easy</button>
-    <button class="chip" type="button" data-diff="medium" aria-pressed="false">Medium</button>
-    <button class="chip" type="button" data-diff="hard" aria-pressed="false">Hard</button>
-    <button class="chip" type="button" id="random-problem" data-topic="tree">🎲 Random unsolved</button>
+    <input class="search" id="problem-search" type="search" placeholder="제목·힌트·저지로 검색…" aria-label="문제 검색">
+    <button class="chip" type="button" data-diff="all" aria-pressed="true">전체</button>
+    <button class="chip" type="button" data-diff="easy" aria-pressed="false">쉬움</button>
+    <button class="chip" type="button" data-diff="medium" aria-pressed="false">보통</button>
+    <button class="chip" type="button" data-diff="hard" aria-pressed="false">어려움</button>
+    <button class="chip" type="button" id="random-problem" data-topic="tree">🎲 안 푼 문제 랜덤</button>
   </div>
 
   <ul class="plist" id="problem-list"></ul>
-  <p class="empty" id="problem-empty" style="display:none">No problem matches that filter.</p>
-  <p style="font-size:.84rem;color:var(--text-faint);margin-top:1rem">
-    Problems marked <em>Premium</em> need a paid LeetCode account — everything else is free.
-    Links were checked against each judge's current problem slug; if one ever moves, search the title on the judge's site.
-  </p>
+  <p class="empty" id="problem-empty" style="display:none">조건에 맞는 문제가 없습니다.</p>
+  <p style="font-size:.84rem;color:var(--text-faint);margin-top:1rem"><span data-lang="ko"><em>Premium</em> 표시가 붙은 문제는 LeetCode 유료 계정이 필요합니다. 나머지는 모두 무료입니다. 링크는 각 저지의 현재 문제 주소를 기준으로 확인했습니다. 혹시 주소가 바뀌었다면 저지에서 제목으로 검색하세요.</span><span data-lang="en">Problems marked <em>Premium</em> need a paid LeetCode account — everything else is free. Links were checked against each judge's current problem slug; if one ever moves, search the title on the judge's site.</span></p>
 </section>
 <div class="pager">
-  <a class="card" href="graph.html"><span>← Previous</span><b>Graph · 그래프</b></a>
-  <a class="card" href="index.html" style="text-align:right"><span>Finished the syllabus →</span><b>Back to the hub</b></a>
+  <a class="card" href="graph.html"><span><span data-lang="ko">← 이전</span><span data-lang="en">← Previous</span></span><b><span data-lang="ko">그래프</span><span data-lang="en">Graph</span></b></a>
+  <a class="card" href="index.html" style="text-align:right"><span><span data-lang="ko">진도 끝 →</span><span data-lang="en">Finished the syllabus →</span></span><b><span data-lang="ko">홈으로</span><span data-lang="en">Back to the hub</span></b></a>
 </div>
 </div>
 </div>
@@ -411,15 +357,9 @@ print(inorder(tree))                       # [1, 4, 6, 7, 8, 10, 14]</code></pre
 
 <footer>
   <div class="wrap">
-    <p style="margin:0 0 .4rem">
-      <strong>DSA Practice Hub</strong> — a personal study site for a year-long 정보/정보과학 course.
-      All explanations, diagrams and code here are written from scratch; no class material is reproduced.
+    <p style="margin:0 0 .4rem"><span data-lang="ko"><strong>DSA 연습 허브</strong> — 1년 과정 정보/정보과학 수업을 위한 개인 학습 사이트입니다. 여기 있는 설명·그림·코드는 모두 새로 작성한 것이며, 수업 자료를 그대로 옮긴 부분은 없습니다.</span><span data-lang="en"><strong>DSA Practice Hub</strong> — a personal study site for a year-long 정보/정보과학 course. All explanations, diagrams and code here are written from scratch; no class material is reproduced.</span>
     </p>
-    <p style="margin:0">
-      Problem links point to <a href="https://leetcode.com/" target="_blank" rel="noopener">LeetCode</a>,
-      <a href="https://www.acmicpc.net/" target="_blank" rel="noopener">Baekjoon</a> and
-      <a href="https://www.geeksforgeeks.org/" target="_blank" rel="noopener">GeeksforGeeks</a>;
-      those problems belong to their respective judges. Progress is stored only in this browser.
+    <p style="margin:0"><span data-lang="ko">문제 링크는 <a href="https://leetcode.com/" target="_blank" rel="noopener">LeetCode</a>, <a href="https://www.acmicpc.net/" target="_blank" rel="noopener">백준</a>, <a href="https://www.geeksforgeeks.org/" target="_blank" rel="noopener">GeeksforGeeks</a>로 연결됩니다. 각 문제의 저작권은 해당 저지에 있습니다. 진행 상황은 이 브라우저에만 저장됩니다.</span><span data-lang="en">Problem links point to <a href="https://leetcode.com/" target="_blank" rel="noopener">LeetCode</a>, <a href="https://www.acmicpc.net/" target="_blank" rel="noopener">Baekjoon</a> and <a href="https://www.geeksforgeeks.org/" target="_blank" rel="noopener">GeeksforGeeks</a>; those problems belong to their respective judges. Progress is stored only in this browser.</span>
     </p>
   </div>
 </footer>
