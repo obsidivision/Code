@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DSA Practice Hub — 자료구조와 알고리즘 연습</title>
+<meta name="description" content="Concept refreshers and curated LeetCode/Baekjoon practice for a high-school Informatics course: sorting, queues, linked lists, graphs and trees.">
+<meta name="color-scheme" content="dark light">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%238b5cf6'/%3E%3Ctext x='50' y='70' font-size='56' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='bold'%3EDS%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="stylesheet" href="assets/styles.css">
+<script>try{document.documentElement.setAttribute('data-theme',localStorage.getItem('dsa-hub:theme')||'dark');}catch(e){}</script>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#ec4899"/></linearGradient>
+</defs></svg>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">DS</span><span class="brand-text">DSA Practice Hub</span>
+    </a>
+    <nav class="nav-links" aria-label="Topics">
+        <a href="sorting.html">Sorting <span style="opacity:.55">정렬</span></a>
+        <a href="queue.html">Queue <span style="opacity:.55">큐</span></a>
+        <a href="linked-list.html">Linked List <span style="opacity:.55">연결 리스트</span></a>
+        <a href="graph.html">Graph <span style="opacity:.55">그래프</span></a>
+        <a href="tree.html">Tree <span style="opacity:.55">트리</span></a>
+    </nav>
+    <button class="theme-toggle" data-theme-toggle type="button" aria-label="Toggle colour theme">☀</button>
+  </div>
+</header>
+
+<main class="wrap">
+
+<section class="hero">
+  <span class="hero-eyebrow">🇰🇷 정보과학 → 🌐 LeetCode</span>
+  <h1>Learn it in class.<br><span class="grad-text">Drill it in English.</span></h1>
+  <p class="lead">
+    Five units, in the order your Informatics course teaches them. Each one gives you a short concept
+    refresher in plain language, a clean Python reference implementation you can actually read, and a
+    leveled set of judge problems that practise exactly that idea.
+  </p>
+  <div class="hero-actions">
+    <a class="btn btn-primary" href="sorting.html">Start with sorting →</a>
+    <button class="btn" type="button" id="random-problem">🎲 Random unsolved problem</button>
+  </div>
+</section>
+
+<section id="topics">
+  <h2 class="section-title">The syllabus</h2>
+  <p>Work top to bottom — each unit leans on the one before it.</p>
+  <div class="topic-grid" id="topic-grid"></div>
+</section>
+
+<section class="card summary" id="progress">
+  <div class="summary-top">
+    <h2>Your progress</h2>
+    <span class="big grad-text" data-overall="pct">0%</span>
+    <span style="color:var(--text-dim);font-size:.9rem">
+      <b data-overall="done">0</b> of <b data-overall="total">0</b> problems solved
+    </span>
+  </div>
+  <div class="pbar"><span data-overall="bar"></span></div>
+  <div class="stat-row">
+    <div class="stat"><b data-overall="done">0</b><span>Problems solved</span></div>
+    <div class="stat"><b data-overall="remaining">0</b><span>Still to go</span></div>
+    <div class="stat"><b data-overall="topics">0</b><span>Units at 100%</span></div>
+    <div class="stat"><b>5</b><span>Units in the course</span></div>
+  </div>
+  <div>
+    <button class="chip" type="button" id="reset-progress">Reset all progress</button>
+  </div>
+</section>
+
+<section id="how">
+  <h2 class="section-title">How to use this site</h2>
+  <div class="kv">
+    <div><b>1 · Refresh</b><span>Read the concept section for the unit you just covered in class. It is short on purpose.</span></div>
+    <div><b>2 · Read the code</b><span>Every structure has a reference Python implementation with comments on the parts that trip people up.</span></div>
+    <div><b>3 · Drill</b><span>Work the problem list top to bottom — it is already ordered Easy → Medium → Hard.</span></div>
+    <div><b>4 · Track</b><span>Tick each problem off. Checkboxes live in this browser's localStorage, so they survive a refresh but are not synced anywhere.</span></div>
+  </div>
+  <div class="note">
+    <b>Why both Korean and English?</b>
+    <p>
+      Your course names these structures in Korean, but almost every practice judge names them in English.
+      Each unit shows both labels so that "연결 리스트" and "linked list" stop being two separate things in your head.
+      Baekjoon problems are mixed in where a Korean-style problem statement fits the concept better.
+    </p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p style="margin:0 0 .4rem">
+      <strong>DSA Practice Hub</strong> — a personal study site for a year-long 정보/정보과학 course.
+      All explanations, diagrams and code here are written from scratch; no class material is reproduced.
+    </p>
+    <p style="margin:0">
+      Problem links point to <a href="https://leetcode.com/" target="_blank" rel="noopener">LeetCode</a>,
+      <a href="https://www.acmicpc.net/" target="_blank" rel="noopener">Baekjoon</a> and
+      <a href="https://www.geeksforgeeks.org/" target="_blank" rel="noopener">GeeksforGeeks</a>;
+      those problems belong to their respective judges. Progress is stored only in this browser.
+    </p>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

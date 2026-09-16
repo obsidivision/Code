@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Linked List (연결 리스트) — DSA Practice Hub</title>
+<meta name="description" content="Nodes and links, the array trade-off, stacks and circular queues built on a linked list, and middle insert/delete.">
+<meta name="color-scheme" content="dark light">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%238b5cf6'/%3E%3Ctext x='50' y='70' font-size='56' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='bold'%3EDS%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="stylesheet" href="assets/styles.css">
+<script>try{document.documentElement.setAttribute('data-theme',localStorage.getItem('dsa-hub:theme')||'dark');}catch(e){}</script>
+</head>
+<body data-topic="linked-list">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#ec4899"/></linearGradient>
+</defs></svg>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">DS</span><span class="brand-text">DSA Practice Hub</span>
+    </a>
+    <nav class="nav-links" aria-label="Topics">
+        <a href="sorting.html">Sorting <span style="opacity:.55">정렬</span></a>
+        <a href="queue.html">Queue <span style="opacity:.55">큐</span></a>
+        <a href="linked-list.html" aria-current="page">Linked List <span style="opacity:.55">연결 리스트</span></a>
+        <a href="graph.html">Graph <span style="opacity:.55">그래프</span></a>
+        <a href="tree.html">Tree <span style="opacity:.55">트리</span></a>
+    </nav>
+    <button class="theme-toggle" data-theme-toggle type="button" aria-label="Toggle colour theme">☀</button>
+  </div>
+</header>
+<main class="wrap">
+<div class="page-head" style="--grad: var(--grad-linked-list); --c-accent: var(--c-linked-list)">
+  <div class="topic-icon">⛓</div>
+  <div class="topic-step" style="margin-top:.9rem">Unit 03</div>
+  <h1>Linked List <span class="ko">연결 리스트</span></h1>
+  <p class="lead" style="max-width:62ch">An array keeps its items in one contiguous block. A linked list gives up that block: each item is its own object, and every item stores the address of the next one. Everything else follows from that.</p>
+</div>
+<div class="layout">
+<aside class="card toc" style="--c-accent: var(--c-linked-list)">
+    <b>On this page</b>
+    <a href="#nodes">Nodes and links</a>
+    <a href="#vs-array">Versus arrays</a>
+    <a href="#flavors">Three flavours</a>
+    <a href="#code">Reference implementation</a>
+    <a href="#middle">Insert and delete</a>
+    <a href="#stack">Stack on a list</a>
+    <a href="#cqueue">Circular queue on a list</a>
+    <a href="#practice">Practice problems</a>
+</aside>
+<div>
+
+
+<section id="nodes" style="--grad: var(--grad-linked-list)">
+  <h2 class="section-title">Nodes and links</h2>
+  <p>
+    A linked list is made of <strong>nodes</strong>. Each node holds two things: the value you care about
+    (<code>data</code>) and a reference to the next node (<code>link</code>, often called <code>next</code>).
+    A single variable, <code>head</code>, points at the first node. The final node's link is
+    <code>None</code>, which is how you know you have reached the end.
+  </p>
+  <p>Traversal is the same three lines every single time:</p>
+<div class="code-card">
+  <div class="code-head"><span>traverse.py</span><button class="copy-btn" type="button">copy</button></div>
+  <pre class="language-python"><code class="language-python">cur = head
+while cur is not None:
+    print(cur.data)
+    cur = cur.link      # &quot;follow the link&quot; - the whole idea in one statement</code></pre>
+</div>
+  <p>
+    The nodes can sit anywhere in memory, in any order. The chain exists only because each node knows the
+    address of the next. Lose <code>head</code> and the whole list becomes unreachable, even though every
+    node is still there.
+  </p>
+</section>
+
+<section id="vs-array" style="--grad: var(--grad-linked-list)">
+  <h2 class="section-title">Versus arrays</h2>
+  <div class="table-scroll">
+  <table class="data">
+    <thead><tr><th>&nbsp;</th><th>Array / Python list</th><th>Linked list</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Access item <em>i</em></strong></td><td>O(1) — compute the address</td><td>O(n) — walk from the head</td></tr>
+      <tr><td><strong>Insert at the front</strong></td><td>O(n) — shift everything right</td><td>O(1) — one new node, one reassignment</td></tr>
+      <tr><td><strong>Delete a known node</strong></td><td>O(n) — shift everything left</td><td>O(1) — reroute one link</td></tr>
+      <tr><td><strong>Size decided</strong></td><td>Up front (in a fixed array)</td><td>Never — grows node by node</td></tr>
+      <tr><td><strong>Memory per item</strong></td><td>Just the value</td><td>Value + one reference per node</td></tr>
+      <tr><td><strong>Cache behaviour</strong></td><td>Great — contiguous</td><td>Poor — nodes scattered</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="note">
+    <b>Read the insert/delete row carefully.</b>
+    <p>
+      "O(1) to delete" assumes you are <em>already holding</em> the node before the one you want to remove.
+      If you only know the value, you first have to find it, and finding is O(n). Linked lists make the
+      editing cheap, not the searching.
+    </p>
+  </div>
+</section>
+
+<section id="flavors" style="--grad: var(--grad-linked-list)">
+  <h2 class="section-title">Three flavours</h2>
+  <div class="kv">
+    <div><b>Singly linked · 단순 연결 리스트</b><span>One link per node, pointing forward. The last node links to <code>None</code>. Cheapest, and the one implemented in depth here.</span></div>
+    <div><b>Circularly linked · 원형 연결 리스트</b><span>The last node links back to the first instead of to <code>None</code>. There is no end — you stop when you arrive back where you started. Perfect for round-robin turn taking.</span></div>
+    <div><b>Doubly linked · 이중 연결 리스트</b><span>Each node stores <code>prev</code> as well as <code>next</code>, so you can walk backwards and delete a node you are standing on without knowing its predecessor. Costs one more reference per node.</span></div>
+  </div>
+</section>
+
+<section id="code" style="--grad: var(--grad-linked-list)">
+  <h2 class="section-title">Reference implementation</h2>
+<div class="code-card">
+  <div class="code-head"><span>linked_list.py</span><button class="copy-btn" type="button">copy</button></div>
+  <pre class="language-python"><code class="language-python">class Node:
+    &quot;&quot;&quot;One link in the chain: a payload plus a reference to whatever comes next.&quot;&quot;&quot;
+
+    def __init__(self, data, link=None):
+        self.data = data
+        self.link = link          # another Node, or None at the end of the list
+
+
+class LinkedList:
+    def __init__(self):
+        self.head = None          # None means &quot;empty list&quot;
+
+    def push_front(self, data):
+        &quot;&quot;&quot;Insert at the head - O(1), no shifting of anything.&quot;&quot;&quot;
+        self.head = Node(data, self.head)
+
+    def find(self, target):
+        &quot;&quot;&quot;Return the first node holding `target`, or None. O(n) - you must walk.&quot;&quot;&quot;
+        cur = self.head
+        while cur is not None:
+            if cur.data == target:
+                return cur
+            cur = cur.link        # the one line that defines traversal
+        return None
+
+    def to_list(self):
+        out, cur = [], self.head
+        while cur is not None:
+            out.append(cur.data)
+            cur = cur.link
+        return out
+
+    def __len__(self):
+        n, cur = 0, self.head
+        while cur is not None:
+            n += 1
+            cur = cur.link
+        return n                  # O(n): there is no stored length to read</code></pre>
+</div>
+  <p>
+    Note <code>__len__</code>: the length is not stored anywhere, so counting means walking. If you need
+    <code>len()</code> often, keep a counter field and update it in every insert and delete.
+  </p>
+</section>
+
+<section id="middle" style="--grad: var(--grad-linked-list)">
+  <h2 class="section-title">Insert and delete in the middle</h2>
+  <p>
+    Both operations are expressed relative to the node <em>before</em> the position you care about — the
+    classic <code>insertNode(before, data)</code> / <code>deleteNode(before)</code> pair. A singly linked
+    node cannot see backwards, so the predecessor is the only handle you have.
+  </p>
+  <p><strong>Insert after <code>before</code>:</strong></p>
+  <ol>
+    <li>Make a new node.</li>
+    <li>Point the new node's link at <code>before.link</code> (the current rest of the list).</li>
+    <li>Point <code>before.link</code> at the new node.</li>
+  </ol>
+  <p>
+    Steps 2 and 3 cannot be swapped. Overwrite <code>before.link</code> first and you have thrown away the
+    only reference to the rest of the list. In Python, <code>Node(data, before.link)</code> does step 2
+    inside the constructor, which makes the correct order hard to get wrong.
+  </p>
+  <p><strong>Delete after <code>before</code>:</strong> point <code>before.link</code> past the victim, at
+  <code>victim.link</code>. The victim is now unreachable and Python reclaims it.</p>
+<div class="code-card">
+  <div class="code-head"><span>linked_list.py (continued)</span><button class="copy-btn" type="button">copy</button></div>
+  <pre class="language-python"><code class="language-python">    def insert_after(self, before, data):
+        &quot;&quot;&quot;Insert `data` directly after the node `before`.
+
+        Order matters: point the new node at the rest of the list *first*,
+        otherwise you overwrite `before.link` and lose the tail.
+        &quot;&quot;&quot;
+        before.link = Node(data, before.link)
+
+    def delete_after(self, before):
+        &quot;&quot;&quot;Unlink the node following `before` and return its data.&quot;&quot;&quot;
+        victim = before.link
+        if victim is None:
+            return None
+        before.link = victim.link      # route around the victim
+        victim.link = None             # optional: leave no dangling reference
+        return victim.data
+
+    def insert_after_value(self, target, data):
+        &quot;&quot;&quot;Walk to the node holding `target`, then insert behind it.&quot;&quot;&quot;
+        before = self.find(target)
+        if before is None:
+            raise ValueError(&quot;no node holds &quot; + repr(target))
+        self.insert_after(before, data)
+
+
+numbers = LinkedList()
+for value in [30, 20, 10]:
+    numbers.push_front(value)          # -&gt; 10 -&gt; 20 -&gt; 30
+numbers.insert_after_value(20, 25)     # -&gt; 10 -&gt; 20 -&gt; 25 -&gt; 30
+print(numbers.to_list())               # [10, 20, 25, 30]</code></pre>
+</div>
+</section>
+
+<section id="stack" style="--grad: var(--grad-linked-list)">
+  <h2 class="section-title">A stack built on a linked list</h2>
+  <p>
+    A stack is last-in-first-out: push and pop both happen at one end. A linked list's head end is O(1) for
+    both, so a stack is almost free — rename <code>head</code> to <code>top</code> and you are done. No
+    capacity limit, no resizing, no wasted slots.
+  </p>
+<div class="code-card">
+  <div class="code-head"><span>linked_stack.py</span><button class="copy-btn" type="button">copy</button></div>
+  <pre class="language-python"><code class="language-python">class LinkedStack:
+    &quot;&quot;&quot;A stack where `top` is just the head of a linked list.&quot;&quot;&quot;
+
+    def __init__(self):
+        self.top = None
+
+    def push(self, data):
+        self.top = Node(data, self.top)      # new node becomes the head - O(1)
+
+    def pop(self):
+        if self.top is None:
+            raise IndexError(&quot;stack is empty&quot;)
+        node = self.top
+        self.top = node.link                 # head moves one step down - O(1)
+        return node.data
+
+    def peek(self):
+        if self.top is None:
+            raise IndexError(&quot;stack is empty&quot;)
+        return self.top.data
+
+    def is_empty(self):
+        return self.top is None
+
+
+s = LinkedStack()
+for ch in &quot;ABC&quot;:
+    s.push(ch)
+print(s.pop(), s.pop(), s.peek())    # C B A</code></pre>
+</div>
+</section>
+
+<section id="cqueue" style="--grad: var(--grad-linked-list)">
+  <h2 class="section-title">A circular queue built on a linked list</h2>
+  <p>
+    A queue needs both ends: remove from the front, add at the rear. Walking to the rear each time would be
+    O(n), so a plain list would need two pointers.
+  </p>
+  <p>
+    Make the list <strong>circular</strong> — the last node links back to the first — and one pointer does
+    the job. Keep only <code>tail</code>. Then <code>tail.link</code> is, by definition, the front node, so
+    both ends are one step away and both operations are O(1).
+  </p>
+<div class="code-card">
+  <div class="code-head"><span>linked_circular_queue.py</span><button class="copy-btn" type="button">copy</button></div>
+  <pre class="language-python"><code class="language-python">class LinkedCircularQueue:
+    &quot;&quot;&quot;Circular linked queue holding a *tail* pointer only.
+
+    Because the last node links back to the first, `tail.link` is always the
+    front. One pointer therefore gives O(1) access to both ends.
+    &quot;&quot;&quot;
+
+    def __init__(self):
+        self.tail = None
+
+    def is_empty(self):
+        return self.tail is None
+
+    def enqueue(self, data):
+        node = Node(data)
+        if self.tail is None:
+            node.link = node             # a one-node ring points at itself
+        else:
+            node.link = self.tail.link   # new node takes over as the last node,
+            self.tail.link = node        # still pointing at the front
+        self.tail = node
+
+    def dequeue(self):
+        if self.tail is None:
+            raise IndexError(&quot;queue is empty&quot;)
+        front = self.tail.link
+        if front is self.tail:           # last remaining node
+            self.tail = None
+        else:
+            self.tail.link = front.link  # skip the old front
+        front.link = None
+        return front.data
+
+    def to_list(self):
+        if self.tail is None:
+            return []
+        out, cur = [], self.tail.link
+        while True:
+            out.append(cur.data)
+            if cur is self.tail:
+                return out
+            cur = cur.link
+
+
+q = LinkedCircularQueue()
+for name in [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]:
+    q.enqueue(name)
+print(q.to_list(), q.dequeue(), q.to_list())   # [&#x27;a&#x27;, &#x27;b&#x27;, &#x27;c&#x27;] a [&#x27;b&#x27;, &#x27;c&#x27;]</code></pre>
+</div>
+  <div class="note">
+    <b>Compare with Unit 02.</b>
+    <p>
+      The array version needed modulo arithmetic and a wasted slot because the storage was fixed. This
+      version needs neither — it allocates a node per item and links it into the ring. It pays instead with
+      one reference per node and worse cache behaviour. Same abstract queue, opposite trade-offs.
+    </p>
+  </div>
+</section>
+
+<section id="practice" style="--grad: var(--grad-linked-list)">
+  <h2 class="section-title">Practice problems</h2>
+  <p>Nearly every one of these is really a pointer-rewiring exercise. Draw the before/after picture before you write code. Tick a box when you solve it — progress is saved in this browser only.</p>
+
+  <div class="card topic-progress" data-progress-topic="linked-list" style="--grad: var(--grad-linked-list)">
+    <div class="pbar"><span></span></div>
+    <div class="pnum">0 / 0 solved</div>
+  </div>
+
+  <div class="filters">
+    <input class="search" id="problem-search" type="search" placeholder="Filter by title, hint or judge…" aria-label="Filter problems">
+    <button class="chip" type="button" data-diff="all" aria-pressed="true">All</button>
+    <button class="chip" type="button" data-diff="easy" aria-pressed="false">Easy</button>
+    <button class="chip" type="button" data-diff="medium" aria-pressed="false">Medium</button>
+    <button class="chip" type="button" data-diff="hard" aria-pressed="false">Hard</button>
+    <button class="chip" type="button" id="random-problem" data-topic="linked-list">🎲 Random unsolved</button>
+  </div>
+
+  <ul class="plist" id="problem-list"></ul>
+  <p class="empty" id="problem-empty" style="display:none">No problem matches that filter.</p>
+  <p style="font-size:.84rem;color:var(--text-faint);margin-top:1rem">
+    Problems marked <em>Premium</em> need a paid LeetCode account — everything else is free.
+    Links were checked against each judge's current problem slug; if one ever moves, search the title on the judge's site.
+  </p>
+</section>
+<div class="pager">
+  <a class="card" href="queue.html"><span>← Previous</span><b>Queue · 큐</b></a>
+  <a class="card" href="graph.html" style="text-align:right"><span>Next topic →</span><b>Graph · 그래프</b></a>
+</div>
+</div>
+</div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p style="margin:0 0 .4rem">
+      <strong>DSA Practice Hub</strong> — a personal study site for a year-long 정보/정보과학 course.
+      All explanations, diagrams and code here are written from scratch; no class material is reproduced.
+    </p>
+    <p style="margin:0">
+      Problem links point to <a href="https://leetcode.com/" target="_blank" rel="noopener">LeetCode</a>,
+      <a href="https://www.acmicpc.net/" target="_blank" rel="noopener">Baekjoon</a> and
+      <a href="https://www.geeksforgeeks.org/" target="_blank" rel="noopener">GeeksforGeeks</a>;
+      those problems belong to their respective judges. Progress is stored only in this browser.
+    </p>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

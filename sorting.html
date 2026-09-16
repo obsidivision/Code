@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sorting (정렬) — DSA Practice Hub</title>
+<meta name="description" content="Bubble sort and selection sort explained pass by pass, with an interactive trace and curated practice problems.">
+<meta name="color-scheme" content="dark light">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%238b5cf6'/%3E%3Ctext x='50' y='70' font-size='56' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='bold'%3EDS%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="stylesheet" href="assets/styles.css">
+<script>try{document.documentElement.setAttribute('data-theme',localStorage.getItem('dsa-hub:theme')||'dark');}catch(e){}</script>
+</head>
+<body data-topic="sorting">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#ec4899"/></linearGradient>
+</defs></svg>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">DS</span><span class="brand-text">DSA Practice Hub</span>
+    </a>
+    <nav class="nav-links" aria-label="Topics">
+        <a href="sorting.html" aria-current="page">Sorting <span style="opacity:.55">정렬</span></a>
+        <a href="queue.html">Queue <span style="opacity:.55">큐</span></a>
+        <a href="linked-list.html">Linked List <span style="opacity:.55">연결 리스트</span></a>
+        <a href="graph.html">Graph <span style="opacity:.55">그래프</span></a>
+        <a href="tree.html">Tree <span style="opacity:.55">트리</span></a>
+    </nav>
+    <button class="theme-toggle" data-theme-toggle type="button" aria-label="Toggle colour theme">☀</button>
+  </div>
+</header>
+<main class="wrap">
+<div class="page-head" style="--grad: var(--grad-sorting); --c-accent: var(--c-sorting)">
+  <div class="topic-icon">⇅</div>
+  <div class="topic-step" style="margin-top:.9rem">Unit 01</div>
+  <h1>Sorting <span class="ko">정렬</span></h1>
+  <p class="lead" style="max-width:62ch">Putting data in order is the first algorithm most courses teach, because almost everything else gets easier once the data is sorted. Start with the two quadratic sorts you can trace by hand.</p>
+</div>
+<div class="layout">
+<aside class="card toc" style="--c-accent: var(--c-sorting)">
+    <b>On this page</b>
+    <a href="#why">Why sort at all</a>
+    <a href="#bubble">Bubble sort</a>
+    <a href="#selection">Selection sort</a>
+    <a href="#trace">Trace the passes</a>
+    <a href="#compare">Side by side</a>
+    <a href="#next">Coming up next</a>
+    <a href="#practice">Practice problems</a>
+</aside>
+<div>
+
+
+<section id="why" style="--grad: var(--grad-sorting)">
+  <h2 class="section-title">Why sort at all</h2>
+  <p>
+    Sorting is rearranging a collection so its items sit in a defined order — smallest to largest,
+    alphabetically, by date, by whatever key you choose. It is rarely the goal by itself. It is what you do
+    first so that the <em>next</em> step gets cheap:
+  </p>
+  <ul>
+    <li><strong>Searching.</strong> Finding a value in unordered data means checking everything, O(n). Once it is sorted you can binary-search it in O(log n).</li>
+    <li><strong>Spotting structure.</strong> Duplicates sit next to each other, the minimum and maximum are at the ends, and the median is in the middle.</li>
+    <li><strong>Merging and comparing.</strong> Two sorted lists can be combined in one linear pass; two unsorted ones cannot.</li>
+  </ul>
+  <p>
+    Bubble sort and selection sort are both <strong>O(n²)</strong>, so nobody ships them for large inputs.
+    You learn them because they are short enough to trace on paper, and tracing them is what teaches you to
+    reason about loop invariants — "after pass <code>k</code>, what do I know for certain?"
+  </p>
+</section>
+
+<section id="bubble" style="--grad: var(--grad-sorting)">
+  <h2 class="section-title">Bubble sort</h2>
+  <p>
+    Walk along the array comparing each item with the one directly to its right. If the pair is out of order,
+    swap it. One walk from left to right is called a <strong>pass</strong>.
+  </p>
+  <p>
+    The key observation: during a pass, the largest value you meet keeps getting swapped rightward and never
+    stops, so by the end of the pass it is sitting in the last slot — its final position. The largest unsorted
+    value "bubbles" to the end every pass. Repeat, and each pass can stop one slot earlier than the last one.
+    After at most <code>n − 1</code> passes everything is in place.
+  </p>
+  <div class="kv">
+    <div><b>Time</b><span>O(n²) average and worst · O(n) best, with early exit</span></div>
+    <div><b>Swaps</b><span>Up to O(n²) — many small adjacent swaps</span></div>
+    <div><b>Extra memory</b><span>O(1) — sorts in place</span></div>
+    <div><b>Stable?</b><span>Yes, if you only swap on a strict <code>&gt;</code></span></div>
+  </div>
+<div class="code-card">
+  <div class="code-head"><span>bubble_sort.py</span><button class="copy-btn" type="button">copy</button></div>
+  <pre class="language-python"><code class="language-python">def bubble_sort(values):
+    &quot;&quot;&quot;Sort `values` in place with bubble sort. Returns the same list.&quot;&quot;&quot;
+    n = len(values)
+    for done in range(n - 1):              # n-1 passes is always enough
+        swapped = False
+        # after `done` passes the last `done` slots already hold the biggest values,
+        # so each pass can stop a little earlier than the previous one
+        for i in range(n - 1 - done):
+            if values[i] &gt; values[i + 1]:  # strict &gt; keeps equal items in order -&gt; stable
+                values[i], values[i + 1] = values[i + 1], values[i]
+                swapped = True
+        if not swapped:                    # a clean pass means it is already sorted
+            break                          # best case becomes O(n)
+    return values
+
+
+print(bubble_sort([5, 4, 3, 2, 1]))        # [1, 2, 3, 4, 5]</code></pre>
+</div>
+  <div class="note">
+    <b>The early-exit flag matters.</b>
+    <p>
+      If a whole pass makes zero swaps, every adjacent pair is already in order — which means the entire array
+      is sorted, and you can stop. That is what turns the best case into a single O(n) pass. Without the flag,
+      bubble sort is O(n²) even on data that was already sorted.
+    </p>
+  </div>
+</section>
+
+<section id="selection" style="--grad: var(--grad-sorting)">
+  <h2 class="section-title">Selection sort</h2>
+  <p>
+    Different strategy, same quadratic cost. Treat the array as a sorted prefix (empty at the start) and an
+    unsorted remainder. Each pass scans the whole remainder, finds the smallest value in it, and swaps that
+    value into the first slot of the remainder. The sorted prefix grows by one, left to right.
+  </p>
+  <p>
+    Notice what the inner loop does: it only tracks the <em>index</em> of the smallest value found so far.
+    Nothing moves until the scan is finished, and then at most one swap happens. That is the real difference
+    from bubble sort — same number of comparisons, far fewer writes.
+  </p>
+  <div class="kv">
+    <div><b>Time</b><span>O(n²) always — no best case, the scan never shortens</span></div>
+    <div><b>Swaps</b><span>At most n − 1 — one per pass</span></div>
+    <div><b>Extra memory</b><span>O(1) — sorts in place</span></div>
+    <div><b>Stable?</b><span>No — a long-distance swap can jump equal items past each other</span></div>
+  </div>
+<div class="code-card">
+  <div class="code-head"><span>selection_sort.py</span><button class="copy-btn" type="button">copy</button></div>
+  <pre class="language-python"><code class="language-python">def selection_sort(values):
+    &quot;&quot;&quot;Sort `values` in place with selection sort. Returns the same list.&quot;&quot;&quot;
+    n = len(values)
+    for start in range(n - 1):
+        lowest = start
+        for i in range(start + 1, n):      # scan the unsorted remainder
+            if values[i] &lt; values[lowest]:
+                lowest = i                 # remember *where* the minimum is, do not swap yet
+        if lowest != start:
+            values[start], values[lowest] = values[lowest], values[start]
+    return values                          # at most n-1 swaps for the whole sort
+
+
+print(selection_sort([5, 4, 3, 2, 1]))     # [1, 2, 3, 4, 5]</code></pre>
+</div>
+  <div class="note">
+    <b>Why is it unstable?</b>
+    <p>
+      Sort <code>[3a, 3b, 1]</code>. The first pass finds <code>1</code> and swaps it with the value in slot 0,
+      which is <code>3a</code> — so <code>3a</code> is thrown to the far right, landing <em>after</em>
+      <code>3b</code>. Two equal keys changed their relative order, which is exactly what "unstable" means.
+      Bubble sort never does this, because it only ever swaps neighbours.
+    </p>
+  </div>
+</section>
+
+<section id="trace" style="--grad: var(--grad-sorting)">
+  <h2 class="section-title">Trace the passes</h2>
+  <p>
+    Step through it.
+    <span class="swatch" style="background:var(--grad-queue)"></span> the pair being compared &nbsp;·&nbsp;
+    <span class="swatch" style="background:var(--grad-sorting)"></span> a swap just happened &nbsp;·&nbsp;
+    <span class="swatch" style="background:var(--grad-graph)"></span> the current minimum (selection sort) &nbsp;·&nbsp;
+    <span class="swatch" style="background:var(--ok)"></span> locked in its final position.
+  </p>
+  <div class="card widget" id="trace-widget">
+    <div class="widget-controls">
+      <button class="chip" type="button" data-algo="bubble" aria-pressed="true">Bubble sort</button>
+      <button class="chip" type="button" data-algo="selection" aria-pressed="false">Selection sort</button>
+      <input class="search" id="trace-input" style="flex:0 1 190px" value="5, 4, 3, 2, 1"
+             aria-label="Array to trace (2-9 numbers)">
+      <button class="chip" type="button" id="trace-prev">‹ Prev</button>
+      <button class="chip" type="button" id="trace-play">▶ Play</button>
+      <button class="chip" type="button" id="trace-next">Next ›</button>
+      <button class="chip" type="button" id="trace-reset">↺ Reset</button>
+      <span class="step-count"></span>
+    </div>
+    <div class="bars"></div>
+    <p class="trace-note"></p>
+  </div>
+  <p style="font-size:.86rem;color:var(--text-faint)">
+    Try <code>1, 2, 3, 4, 5</code> on bubble sort to watch the early exit fire after a single pass —
+    then try the same input on selection sort, which grinds through every pass regardless.
+  </p>
+</section>
+
+<section id="compare" style="--grad: var(--grad-sorting)">
+  <h2 class="section-title">Side by side</h2>
+  <div class="table-scroll">
+  <table class="data">
+    <thead><tr><th>&nbsp;</th><th>Bubble sort</th><th>Selection sort</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Idea</strong></td><td>Swap adjacent pairs until nothing is out of order</td><td>Find the minimum of the remainder, swap it into place</td></tr>
+      <tr><td><strong>Comparisons</strong></td><td>~n²/2</td><td>~n²/2 (always)</td></tr>
+      <tr><td><strong>Swaps</strong></td><td>0 … ~n²/2</td><td>at most n − 1</td></tr>
+      <tr><td><strong>Best case</strong></td><td>O(n) with the early-exit flag</td><td>O(n²) — no shortcut exists</td></tr>
+      <tr><td><strong>Stable</strong></td><td>Yes</td><td>No</td></tr>
+      <tr><td><strong>Good when</strong></td><td>Data is nearly sorted already</td><td>Writing to memory is expensive</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>
+    Both do roughly the same number of comparisons. If comparing is the expensive part, they tie; if
+    <em>moving</em> data is expensive, selection sort wins clearly.
+  </p>
+</section>
+
+<section id="next" style="--grad: var(--grad-sorting)">
+  <h2 class="section-title">Coming up next</h2>
+  <p>Your course continues through this unit — here is a one-line preview of each, so the names are not new when they arrive.</p>
+  <div class="kv">
+    <div><b>삽입 정렬 · Insertion sort</b><span>Take the next item and slide it backwards into its place in the already-sorted prefix. O(n²), but genuinely fast on nearly-sorted data and stable. Drill it on <a href="https://leetcode.com/problems/insertion-sort-list/" target="_blank" rel="noopener">LC 147 Insertion Sort List</a>.</span></div>
+    <div><b>퀵 정렬 · Quicksort</b><span>Pick a pivot, partition everything smaller to its left and larger to its right, then recurse on both sides. O(n log n) average, O(n²) worst. Drill it on <a href="https://leetcode.com/problems/sort-an-array/" target="_blank" rel="noopener">LC 912 Sort an Array</a> and <a href="https://leetcode.com/problems/kth-largest-element-in-an-array/" target="_blank" rel="noopener">LC 215 Kth Largest Element</a>.</span></div>
+  </div>
+</section>
+
+<section id="practice" style="--grad: var(--grad-sorting)">
+  <h2 class="section-title">Practice problems</h2>
+  <p>Ordered Easy → Medium → Hard. The first few are about recognising order; the later ones make you choose a sorting strategy rather than call a library function. Tick a box when you solve it — progress is saved in this browser only.</p>
+
+  <div class="card topic-progress" data-progress-topic="sorting" style="--grad: var(--grad-sorting)">
+    <div class="pbar"><span></span></div>
+    <div class="pnum">0 / 0 solved</div>
+  </div>
+
+  <div class="filters">
+    <input class="search" id="problem-search" type="search" placeholder="Filter by title, hint or judge…" aria-label="Filter problems">
+    <button class="chip" type="button" data-diff="all" aria-pressed="true">All</button>
+    <button class="chip" type="button" data-diff="easy" aria-pressed="false">Easy</button>
+    <button class="chip" type="button" data-diff="medium" aria-pressed="false">Medium</button>
+    <button class="chip" type="button" data-diff="hard" aria-pressed="false">Hard</button>
+    <button class="chip" type="button" id="random-problem" data-topic="sorting">🎲 Random unsolved</button>
+  </div>
+
+  <ul class="plist" id="problem-list"></ul>
+  <p class="empty" id="problem-empty" style="display:none">No problem matches that filter.</p>
+  <p style="font-size:.84rem;color:var(--text-faint);margin-top:1rem">
+    Problems marked <em>Premium</em> need a paid LeetCode account — everything else is free.
+    Links were checked against each judge's current problem slug; if one ever moves, search the title on the judge's site.
+  </p>
+</section>
+<div class="pager">
+  <a class="card" href="index.html"><span>←</span><b>Back to the hub</b></a>
+  <a class="card" href="queue.html" style="text-align:right"><span>Next topic →</span><b>Queue · 큐</b></a>
+</div>
+</div>
+</div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p style="margin:0 0 .4rem">
+      <strong>DSA Practice Hub</strong> — a personal study site for a year-long 정보/정보과학 course.
+      All explanations, diagrams and code here are written from scratch; no class material is reproduced.
+    </p>
+    <p style="margin:0">
+      Problem links point to <a href="https://leetcode.com/" target="_blank" rel="noopener">LeetCode</a>,
+      <a href="https://www.acmicpc.net/" target="_blank" rel="noopener">Baekjoon</a> and
+      <a href="https://www.geeksforgeeks.org/" target="_blank" rel="noopener">GeeksforGeeks</a>;
+      those problems belong to their respective judges. Progress is stored only in this browser.
+    </p>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

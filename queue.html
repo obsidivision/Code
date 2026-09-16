@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Queue (큐) — DSA Practice Hub</title>
+<meta name="description" content="Why linear array queues waste space, how a circular queue fixes it with modulo arithmetic, and ring buffers.">
+<meta name="color-scheme" content="dark light">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%238b5cf6'/%3E%3Ctext x='50' y='70' font-size='56' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='bold'%3EDS%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="stylesheet" href="assets/styles.css">
+<script>try{document.documentElement.setAttribute('data-theme',localStorage.getItem('dsa-hub:theme')||'dark');}catch(e){}</script>
+</head>
+<body data-topic="queue">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#ec4899"/></linearGradient>
+</defs></svg>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">DS</span><span class="brand-text">DSA Practice Hub</span>
+    </a>
+    <nav class="nav-links" aria-label="Topics">
+        <a href="sorting.html">Sorting <span style="opacity:.55">정렬</span></a>
+        <a href="queue.html" aria-current="page">Queue <span style="opacity:.55">큐</span></a>
+        <a href="linked-list.html">Linked List <span style="opacity:.55">연결 리스트</span></a>
+        <a href="graph.html">Graph <span style="opacity:.55">그래프</span></a>
+        <a href="tree.html">Tree <span style="opacity:.55">트리</span></a>
+    </nav>
+    <button class="theme-toggle" data-theme-toggle type="button" aria-label="Toggle colour theme">☀</button>
+  </div>
+</header>
+<main class="wrap">
+<div class="page-head" style="--grad: var(--grad-queue); --c-accent: var(--c-queue)">
+  <div class="topic-icon">◷</div>
+  <div class="topic-step" style="margin-top:.9rem">Unit 02</div>
+  <h1>Queue <span class="ko">큐</span></h1>
+  <p class="lead" style="max-width:62ch">A queue is first-in-first-out: you add at the rear and remove from the front, like a line at a counter. The interesting part is not the rule — it is making it work on a fixed-size array without wasting space.</p>
+</div>
+<div class="layout">
+<aside class="card toc" style="--c-accent: var(--c-queue)">
+    <b>On this page</b>
+    <a href="#linear">The linear queue problem</a>
+    <a href="#circular">Going circular</a>
+    <a href="#gap">The sacrificial slot</a>
+    <a href="#code">Reference implementation</a>
+    <a href="#ring">Ring buffers</a>
+    <a href="#practice">Practice problems</a>
+</aside>
+<div>
+
+
+<section id="linear" style="--grad: var(--grad-queue)">
+  <h2 class="section-title">The linear queue problem</h2>
+  <p>
+    Take an array of 5 slots and two indices: <code>front</code> for where things leave and
+    <code>rear</code> for where things arrive. Enqueue moves <code>rear</code> right; dequeue moves
+    <code>front</code> right. Simple — and broken.
+  </p>
+  <p>
+    Enqueue five items, then dequeue three. <code>front</code> is now at index 3 and <code>rear</code> has hit
+    the end of the array. Three slots at the left are empty and unusable, yet the next
+    <code>enqueue</code> reports "full". The queue has <em>crawled</em> off the right edge of the array
+    instead of reusing the space behind it.
+  </p>
+  <p>Two ways out:</p>
+  <ul>
+    <li><strong>Shift everything left</strong> on every dequeue so <code>front</code> stays at 0. Correct, but each dequeue is now O(n) instead of O(1) — you have paid for the fix with time.</li>
+    <li><strong>Let the indices wrap around</strong> to the start of the array when they run off the end. Still O(1), no data moves. This is the circular queue.</li>
+  </ul>
+</section>
+
+<section id="circular" style="--grad: var(--grad-queue)">
+  <h2 class="section-title">Going circular</h2>
+  <p>
+    Nothing about the array changes — it is still a flat block of memory. What changes is how you advance
+    the indices. Instead of <code>rear = rear + 1</code>, you write:
+  </p>
+<div class="code-card">
+  <div class="code-head"><span>advance.py</span><button class="copy-btn" type="button">copy</button></div>
+  <pre class="language-python"><code class="language-python">front = (front + 1) % capacity
+rear  = (rear + 1) % capacity</code></pre>
+</div>
+  <p>
+    The modulo does all the work. When an index reaches the last slot, the next step sends it back to 0, so
+    the array behaves as if its two ends were joined into a ring. Slots freed by <code>dequeue</code> at the
+    front become available to <code>enqueue</code> again, and both operations stay O(1).
+  </p>
+  <div class="note">
+    <b>Drawing it helps.</b>
+    <p>
+      Sketch the array as a clock face with the slot indices around the rim. <code>front</code> and
+      <code>rear</code> are two hands that only ever move clockwise, and <code>rear</code> chases
+      <code>front</code> around the dial forever. The queue's contents are the arc from one hand to the other.
+    </p>
+  </div>
+</section>
+
+<section id="gap" style="--grad: var(--grad-queue)">
+  <h2 class="section-title">The sacrificial slot</h2>
+  <p>
+    Circular indices create one nasty ambiguity. If you fill the array completely, <code>rear</code> catches
+    up to <code>front</code> — and <code>front == rear</code> is also exactly what an empty queue looks like.
+    Two opposite states, one identical test.
+  </p>
+  <p>
+    The standard fix is to refuse to use the last free slot. Allocate <code>capacity + 1</code> slots for a
+    queue that holds <code>capacity</code> items, and call it full one step early:
+  </p>
+  <div class="kv">
+    <div><b>Empty</b><span><code>front == rear</code></span></div>
+    <div><b>Full</b><span><code>front == (rear + 1) % slots</code></span></div>
+    <div><b>Size</b><span><code>(rear - front + slots) % slots</code></span></div>
+  </div>
+  <p>
+    Because one slot is always left open, the two conditions can never be true at the same time. The
+    <code>+ slots</code> inside the size formula is there for the case where <code>rear</code> has wrapped
+    past 0 and is numerically smaller than <code>front</code> — without it you would get a negative count.
+  </p>
+  <p>
+    The alternative is to keep an explicit <code>count</code> field and use the whole array. That works too,
+    and costs one extra integer instead of one wasted slot. Courses usually teach the empty-slot version
+    because it forces you to actually reason about the wrap-around.
+  </p>
+</section>
+
+<section id="code" style="--grad: var(--grad-queue)">
+  <h2 class="section-title">Reference implementation</h2>
+<div class="code-card">
+  <div class="code-head"><span>circular_queue.py</span><button class="copy-btn" type="button">copy</button></div>
+  <pre class="language-python"><code class="language-python">class CircularQueue:
+    &quot;&quot;&quot;Fixed-size queue on a Python list, with wrap-around indices.
+
+    Convention used here:
+      * `front` points at the slot *before* the first item
+      * `rear`  points at the slot holding the last item
+      * one slot is deliberately never used, so &quot;full&quot; and &quot;empty&quot; differ
+    &quot;&quot;&quot;
+
+    def __init__(self, capacity):
+        self.slots = capacity + 1          # +1 for the sacrificial empty slot
+        self.buffer = [None] * self.slots
+        self.front = 0
+        self.rear = 0
+
+    def is_empty(self):
+        return self.front == self.rear
+
+    def is_full(self):
+        return self.front == (self.rear + 1) % self.slots
+
+    def size(self):
+        # +slots before the modulo keeps the result positive after a wrap
+        return (self.rear - self.front + self.slots) % self.slots
+
+    def enqueue(self, item):
+        if self.is_full():
+            raise IndexError(&quot;queue is full&quot;)
+        self.rear = (self.rear + 1) % self.slots   # step forward, wrapping to 0
+        self.buffer[self.rear] = item
+
+    def dequeue(self):
+        if self.is_empty():
+            raise IndexError(&quot;queue is empty&quot;)
+        self.front = (self.front + 1) % self.slots
+        item = self.buffer[self.front]
+        self.buffer[self.front] = None             # not required, but keeps prints readable
+        return item
+
+    def peek(self):
+        if self.is_empty():
+            raise IndexError(&quot;queue is empty&quot;)
+        return self.buffer[(self.front + 1) % self.slots]
+
+    def display(self):
+        &quot;&quot;&quot;Items in front-to-rear order, without disturbing the queue.&quot;&quot;&quot;
+        out, i = [], self.front
+        while i != self.rear:
+            i = (i + 1) % self.slots
+            out.append(self.buffer[i])
+        return out
+
+
+q = CircularQueue(4)
+for name in [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;]:
+    q.enqueue(name)
+print(q.display(), q.size(), q.is_full())   # [&#x27;a&#x27;, &#x27;b&#x27;, &#x27;c&#x27;, &#x27;d&#x27;] 4 True
+q.dequeue(); q.dequeue()
+q.enqueue(&quot;e&quot;)                              # reuses the slots &#x27;a&#x27; and &#x27;b&#x27; vacated
+print(q.display(), q.size())                # [&#x27;c&#x27;, &#x27;d&#x27;, &#x27;e&#x27;] 3</code></pre>
+</div>
+  <div class="table-scroll">
+  <table class="data">
+    <thead><tr><th>Operation</th><th>Cost</th><th>What it touches</th></tr></thead>
+    <tbody>
+      <tr><td><code>enqueue</code></td><td>O(1)</td><td>Advances <code>rear</code>, writes one slot</td></tr>
+      <tr><td><code>dequeue</code></td><td>O(1)</td><td>Advances <code>front</code>, reads one slot</td></tr>
+      <tr><td><code>peek</code></td><td>O(1)</td><td>Reads the slot after <code>front</code>, moves nothing</td></tr>
+      <tr><td><code>size</code></td><td>O(1)</td><td>Pure arithmetic on the two indices</td></tr>
+      <tr><td><code>display</code></td><td>O(n)</td><td>Walks the arc from <code>front</code> to <code>rear</code></td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section id="ring" style="--grad: var(--grad-queue)">
+  <h2 class="section-title">Ring buffers — the useful twist</h2>
+  <p>
+    Change one rule and the circular queue turns into something you will meet constantly in real systems:
+    when it is full, <strong>do not refuse the new item — overwrite the oldest one</strong>.
+  </p>
+  <p>
+    That gives you a structure that always holds the N most recent things, in constant time and constant
+    memory: the last 10 chat messages, the last 100 log lines, the last 60 frames of sensor readings, an
+    undo history capped at 50 steps. No allocation, no shifting, no growth.
+  </p>
+<div class="code-card">
+  <div class="code-head"><span>ring_buffer.py</span><button class="copy-btn" type="button">copy</button></div>
+  <pre class="language-python"><code class="language-python">class RingBuffer:
+    &quot;&quot;&quot;Keeps only the N most recent items. When it is full the oldest is overwritten.&quot;&quot;&quot;
+
+    def __init__(self, keep):
+        self.buffer = [None] * keep
+        self.keep = keep
+        self.next = 0        # where the next write goes
+        self.count = 0       # how many real items are stored (caps at `keep`)
+
+    def push(self, item):
+        self.buffer[self.next] = item              # no &quot;full&quot; check: overwriting is the point
+        self.next = (self.next + 1) % self.keep
+        self.count = min(self.count + 1, self.keep)
+
+    def recent(self):
+        &quot;&quot;&quot;Stored items, oldest first.&quot;&quot;&quot;
+        start = (self.next - self.count) % self.keep
+        return [self.buffer[(start + k) % self.keep] for k in range(self.count)]
+
+
+log = RingBuffer(3)
+for message in [&quot;m1&quot;, &quot;m2&quot;, &quot;m3&quot;, &quot;m4&quot;, &quot;m5&quot;]:
+    log.push(message)
+print(log.recent())          # [&#x27;m3&#x27;, &#x27;m4&#x27;, &#x27;m5&#x27;] - only the last 3 survive</code></pre>
+</div>
+  <p>
+    <strong>Moving averages</strong> are the classic application: keep the last N readings in the ring, keep
+    a running sum, and on each push subtract the value you are about to overwrite and add the new one. The
+    average stays O(1) no matter how large N is. That is precisely the LC 346 problem in the list below.
+  </p>
+</section>
+
+<section id="practice" style="--grad: var(--grad-queue)">
+  <h2 class="section-title">Practice problems</h2>
+  <p>The design problems are the ones that matter most here — LC 622 is essentially the class exercise, in English. Tick a box when you solve it — progress is saved in this browser only.</p>
+
+  <div class="card topic-progress" data-progress-topic="queue" style="--grad: var(--grad-queue)">
+    <div class="pbar"><span></span></div>
+    <div class="pnum">0 / 0 solved</div>
+  </div>
+
+  <div class="filters">
+    <input class="search" id="problem-search" type="search" placeholder="Filter by title, hint or judge…" aria-label="Filter problems">
+    <button class="chip" type="button" data-diff="all" aria-pressed="true">All</button>
+    <button class="chip" type="button" data-diff="easy" aria-pressed="false">Easy</button>
+    <button class="chip" type="button" data-diff="medium" aria-pressed="false">Medium</button>
+    <button class="chip" type="button" data-diff="hard" aria-pressed="false">Hard</button>
+    <button class="chip" type="button" id="random-problem" data-topic="queue">🎲 Random unsolved</button>
+  </div>
+
+  <ul class="plist" id="problem-list"></ul>
+  <p class="empty" id="problem-empty" style="display:none">No problem matches that filter.</p>
+  <p style="font-size:.84rem;color:var(--text-faint);margin-top:1rem">
+    Problems marked <em>Premium</em> need a paid LeetCode account — everything else is free.
+    Links were checked against each judge's current problem slug; if one ever moves, search the title on the judge's site.
+  </p>
+</section>
+<div class="pager">
+  <a class="card" href="sorting.html"><span>← Previous</span><b>Sorting · 정렬</b></a>
+  <a class="card" href="linked-list.html" style="text-align:right"><span>Next topic →</span><b>Linked List · 연결 리스트</b></a>
+</div>
+</div>
+</div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p style="margin:0 0 .4rem">
+      <strong>DSA Practice Hub</strong> — a personal study site for a year-long 정보/정보과학 course.
+      All explanations, diagrams and code here are written from scratch; no class material is reproduced.
+    </p>
+    <p style="margin:0">
+      Problem links point to <a href="https://leetcode.com/" target="_blank" rel="noopener">LeetCode</a>,
+      <a href="https://www.acmicpc.net/" target="_blank" rel="noopener">Baekjoon</a> and
+      <a href="https://www.geeksforgeeks.org/" target="_blank" rel="noopener">GeeksforGeeks</a>;
+      those problems belong to their respective judges. Progress is stored only in this browser.
+    </p>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>
